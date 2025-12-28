@@ -12,12 +12,7 @@ npm install -g datadog-mcp-server
 
 ## Configuration
 
-### Claude Desktop
-
-Add to your Claude Desktop configuration file:
-
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows:** `%APPDATA%/Claude/claude_desktop_config.json`
+Most MCP-compatible tools use a similar JSON configuration. The core server configuration is:
 
 ```json
 {
@@ -34,6 +29,74 @@ Add to your Claude Desktop configuration file:
   }
 }
 ```
+
+### Claude Code (CLI)
+
+Add via CLI or edit the config file directly:
+
+```bash
+claude mcp add datadog -- npx datadog-mcp-server \
+  --apiKey <YOUR_API_KEY> \
+  --appKey <YOUR_APP_KEY> \
+  --site datadoghq.com
+```
+
+Or add to `~/.claude.json` (user scope) or `.mcp.json` (project scope):
+
+```json
+{
+  "mcpServers": {
+    "datadog": {
+      "command": "npx",
+      "args": ["datadog-mcp-server", "--apiKey", "<YOUR_API_KEY>", "--appKey", "<YOUR_APP_KEY>", "--site", "datadoghq.com"]
+    }
+  }
+}
+```
+
+### Gemini CLI
+
+Add to `~/.gemini/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "datadog": {
+      "command": "npx",
+      "args": ["datadog-mcp-server", "--apiKey", "<YOUR_API_KEY>", "--appKey", "<YOUR_APP_KEY>", "--site", "datadoghq.com"]
+    }
+  }
+}
+```
+
+### Codex CLI (OpenAI)
+
+Add to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.datadog]
+command = "npx"
+args = ["datadog-mcp-server", "--apiKey", "<YOUR_API_KEY>", "--appKey", "<YOUR_APP_KEY>", "--site", "datadoghq.com"]
+```
+
+### Cursor / Windsurf / VS Code
+
+| Tool | Config File |
+|------|-------------|
+| Cursor | `~/.cursor/mcp.json` or `.cursor/mcp.json` (project) |
+| Windsurf | `~/.codeium/windsurf/mcp_config.json` |
+| VS Code | User Settings JSON (Ctrl+Shift+P > "Preferences: Open User Settings (JSON)") |
+
+Use the standard JSON format shown above.
+
+### Claude Desktop
+
+Add to your Claude Desktop configuration file:
+
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows:** `%APPDATA%/Claude/claude_desktop_config.json`
+
+Use the standard JSON format shown above.
 
 ### Datadog Credentials
 
@@ -109,11 +172,14 @@ Create a scoped key: **Organization Settings** > **Application Keys** > **New Ke
 ### Viewing MCP Logs
 
 ```bash
-# macOS
+# Claude Desktop (macOS)
 tail -f ~/Library/Logs/Claude/mcp*.log
 
-# Windows (PowerShell)
+# Claude Desktop (Windows PowerShell)
 Get-Content "$env:APPDATA\Claude\Logs\mcp*.log" -Tail 20 -Wait
+
+# Claude Code CLI
+claude mcp list   # check server status
 ```
 
 ## Development
