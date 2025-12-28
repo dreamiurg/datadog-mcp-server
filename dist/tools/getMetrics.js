@@ -19,7 +19,7 @@ exports.getMetrics = {
         try {
             const { q } = params;
             const response = await apiInstance.listMetrics({ q: q ?? "*" });
-            const resultCount = Array.isArray(response) ? response.length : 1;
+            const resultCount = response.results?.metrics?.length ?? 0;
             log.info({ resultCount }, "get-metrics completed");
             return response;
         }

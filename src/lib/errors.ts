@@ -22,6 +22,24 @@ const SCOPE_HINTS: Record<string, string> = {
 };
 
 /**
+ * Finds the required scope for a given context using prefix matching.
+ * Handles dynamic contexts like "fetching monitor 12345" by matching against "fetching monitor".
+ */
+function findRequiredScope(context: string): string | undefined {
+  // First try exact match
+  if (SCOPE_HINTS[context]) {
+    return SCOPE_HINTS[context];
+  }
+  // Fall back to prefix matching for dynamic contexts (e.g., "fetching monitor 123")
+  for (const [prefix, scope] of Object.entries(SCOPE_HINTS)) {
+    if (context.startsWith(prefix)) {
+      return scope;
+    }
+  }
+  return undefined;
+}
+
+/**
  * Custom error class for Datadog API errors with status code information
  */
 export class DatadogApiError extends Error {
@@ -68,7 +86,7 @@ export function handleApiError(error: unknown, context: string): never {
   const statusCode = isRawApiError(error) ? (error.status ?? error.code) : undefined;
 
   if (statusCode === 403) {
-    const requiredScope = SCOPE_HINTS[context];
+    const requiredScope = findRequiredScope(context);
     const scopeHint = requiredScope
       ? ` This operation requires the '${requiredScope}' scope on your Application Key.`
       : "";

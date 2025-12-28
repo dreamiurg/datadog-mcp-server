@@ -34,12 +34,10 @@ const getSLOs_js_1 = require("./tools/getSLOs.js");
 const searchLogs_js_1 = require("./tools/searchLogs.js");
 // Helper function to mask sensitive credentials for logging
 const maskCredential = (credential) => {
-    if (!credential || credential.length <= 6) {
+    if (!credential || credential.length <= 4) {
         return "***";
     }
-    const first3 = credential.slice(0, 3);
-    const last3 = credential.slice(-3);
-    return `${first3}...${last3}`;
+    return `***${credential.slice(-4)}`;
 };
 // Parse command line arguments
 const argv = (0, minimist_1.default)(process.argv.slice(2));
@@ -151,7 +149,6 @@ server.tool("get-monitor", "Get full details for a specific monitor by ID. Use a
     };
 });
 server.tool("get-dashboards", "List all Datadog dashboards. Use to answer 'what dashboards exist', 'find dashboard for API metrics', or to get dashboard IDs for get-dashboard. Returns dashboard names, IDs, and URLs.", {
-    filterConfigured: zod_1.z.boolean().optional(),
     limit: zod_1.z.number().default(100),
 }, async (args) => {
     const startTime = Date.now();
@@ -185,7 +182,9 @@ server.tool("get-metrics", "Search for available Datadog metrics by name pattern
     index_js_1.logger.info({ tool: "get-metrics", args }, "Tool call started");
     const result = await getMetrics_js_1.getMetrics.execute(args);
     const durationMs = Date.now() - startTime;
-    const resultCount = result && "metrics" in result && Array.isArray(result.metrics) ? result.metrics.length : 0;
+    const resultCount = result?.results?.metrics && Array.isArray(result.results.metrics)
+        ? result.results.metrics.length
+        : 0;
     index_js_1.logger.debug({ tool: "get-metrics", resultCount, durationMs }, "Tool execution completed");
     return {
         content: [{ type: "text", text: JSON.stringify(result) }],
@@ -224,7 +223,6 @@ server.tool("get-events", "Query Datadog events within a time range. Events incl
     };
 });
 server.tool("get-incidents", "List Datadog incidents for incident management. Use for 'show active incidents', 'what incidents happened this week', or 'find incidents related to payments'. Includes severity, status, commander, and timeline.", {
-    includeArchived: zod_1.z.boolean().optional(),
     pageSize: zod_1.z.number().optional(),
     pageOffset: zod_1.z.number().optional(),
     query: zod_1.z.string().optional(),
@@ -398,6 +396,7 @@ server
 })
     .catch((error) => {
     index_js_1.logger.error({ error: error instanceof Error ? error.message : String(error) }, "Server connection failure");
+    process.exit(1);
 });
 // Graceful shutdown handling
 const shutdown = async (signal) => {

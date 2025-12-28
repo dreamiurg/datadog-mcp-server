@@ -2,7 +2,6 @@ import { v1 } from "@datadog/datadog-api-client";
 import { createDatadogConfiguration, createToolLogger, handleApiError } from "../lib/index.js";
 
 interface GetDashboardsParams {
-  filterConfigured?: boolean;
   limit?: number;
 }
 
@@ -26,8 +25,6 @@ export const getDashboards = {
 
     try {
       const { limit } = params;
-      // Note: filterConfigured is accepted for API compatibility but not used
-      // as the Datadog API doesn't support server-side filtering
 
       const response = await apiInstance.listDashboards();
 

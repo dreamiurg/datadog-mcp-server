@@ -34,12 +34,10 @@ import { searchLogs } from "./tools/searchLogs.js";
 
 // Helper function to mask sensitive credentials for logging
 const maskCredential = (credential: string | undefined): string => {
-  if (!credential || credential.length <= 6) {
+  if (!credential || credential.length <= 4) {
     return "***";
   }
-  const first3 = credential.slice(0, 3);
-  const last3 = credential.slice(-3);
-  return `${first3}...${last3}`;
+  return `***${credential.slice(-4)}`;
 };
 
 // Parse command line arguments
@@ -182,7 +180,6 @@ server.tool(
   "get-dashboards",
   "List all Datadog dashboards. Use to answer 'what dashboards exist', 'find dashboard for API metrics', or to get dashboard IDs for get-dashboard. Returns dashboard names, IDs, and URLs.",
   {
-    filterConfigured: z.boolean().optional(),
     limit: z.number().default(100),
   },
   async (args) => {
@@ -231,7 +228,9 @@ server.tool(
     const result = await getMetrics.execute(args);
     const durationMs = Date.now() - startTime;
     const resultCount =
-      result && "metrics" in result && Array.isArray(result.metrics) ? result.metrics.length : 0;
+      result?.results?.metrics && Array.isArray(result.results.metrics)
+        ? result.results.metrics.length
+        : 0;
     logger.debug({ tool: "get-metrics", resultCount, durationMs }, "Tool execution completed");
     return {
       content: [{ type: "text", text: JSON.stringify(result) }],
@@ -288,7 +287,6 @@ server.tool(
   "get-incidents",
   "List Datadog incidents for incident management. Use for 'show active incidents', 'what incidents happened this week', or 'find incidents related to payments'. Includes severity, status, commander, and timeline.",
   {
-    includeArchived: z.boolean().optional(),
     pageSize: z.number().optional(),
     pageOffset: z.number().optional(),
     query: z.string().optional(),
@@ -510,6 +508,7 @@ server
       { error: error instanceof Error ? error.message : String(error) },
       "Server connection failure",
     );
+    process.exit(1);
   });
 
 // Graceful shutdown handling

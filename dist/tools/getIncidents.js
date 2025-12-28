@@ -19,7 +19,7 @@ exports.getIncidents = {
             throw new Error("getIncidents not initialized. Call initialize() first.");
         }
         try {
-            const { includeArchived, pageSize, pageOffset, query, limit } = params;
+            const { pageSize, pageOffset, query, limit } = params;
             log.debug({ hasQuery: !!query, pageSize, pageOffset }, "execute() called");
             // If a query is provided, use searchIncidents instead of listIncidents
             if (query) {
@@ -41,11 +41,6 @@ exports.getIncidents = {
                 pageSize,
                 pageOffset,
             };
-            // Note: includeArchived doesn't map directly to the API's include parameter
-            // The include parameter takes IncidentRelatedObject values like "users", "attachments"
-            // The original code was incorrect here - we'll skip includeArchived for now
-            // as there's no direct API support for it in listIncidents
-            void includeArchived; // Acknowledge but don't use (API doesn't support this filter)
             const response = await apiInstance.listIncidents(apiParams);
             if (limit && response.data && response.data.length > limit) {
                 response.data = response.data.slice(0, limit);
