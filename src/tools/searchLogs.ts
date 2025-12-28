@@ -24,15 +24,15 @@ export const searchLogs = {
     const configOpts = {
       authMethods: {
         apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY
-      }
+        appKeyAuth: process.env.DD_APP_KEY,
+      },
     };
 
     configuration = client.createConfiguration(configOpts);
 
     if (process.env.DD_LOGS_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_LOGS_SITE
+        site: process.env.DD_LOGS_SITE,
       });
     }
 
@@ -48,21 +48,21 @@ export const searchLogs = {
         filter,
         sort,
         page,
-        limit
+        limit,
       } = params;
 
       if (!apiKey || !appKey) {
         throw new Error("API Key and App Key are required");
       }
 
-      const apiInstance = new v2.LogsApi(configuration);
+      const _apiInstance = new v2.LogsApi(configuration);
 
       // Use a more flexible approach with POST
       // Create the search request based on API docs
       const body = {
         filter: filter,
         sort: sort,
-        page: page
+        page: page,
       };
 
       // Use DD_LOGS_SITE environment variable instead of DD_SITE
@@ -73,19 +73,19 @@ export const searchLogs = {
       const headers = {
         "Content-Type": "application/json",
         "DD-API-KEY": apiKey,
-        "DD-APPLICATION-KEY": appKey
+        "DD-APPLICATION-KEY": appKey,
       };
 
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: headers,
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
         throw {
           status: response.status,
-          message: await response.text()
+          message: await response.text(),
         };
       }
 
@@ -100,15 +100,15 @@ export const searchLogs = {
     } catch (error: any) {
       if (error.status === 403) {
         console.error(
-          "Authorization failed (403 Forbidden): Check that your API key and Application key are valid and have sufficient permissions to access logs."
+          "Authorization failed (403 Forbidden): Check that your API key and Application key are valid and have sufficient permissions to access logs.",
         );
         throw new Error(
-          "Datadog API authorization failed. Please verify your API and Application keys have the correct permissions."
+          "Datadog API authorization failed. Please verify your API and Application keys have the correct permissions.",
         );
       } else {
         console.error("Error searching logs:", error);
         throw error;
       }
     }
-  }
+  },
 };

@@ -12,22 +12,22 @@ export const getDashboards = {
     const configOpts = {
       authMethods: {
         apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY
-      }
+        appKeyAuth: process.env.DD_APP_KEY,
+      },
     };
 
     configuration = client.createConfiguration(configOpts);
 
     if (process.env.DD_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_SITE
+        site: process.env.DD_SITE,
       });
     }
   },
 
   execute: async (params: GetDashboardsParams) => {
     try {
-      const { filterConfigured, limit } = params;
+      const { filterConfigured: _filterConfigured, limit } = params;
 
       const apiInstance = new v1.DashboardsApi(configuration);
 
@@ -44,11 +44,11 @@ export const getDashboards = {
 
       return {
         ...response,
-        dashboards: filteredDashboards
+        dashboards: filteredDashboards,
       };
     } catch (error) {
       console.error("Error fetching dashboards:", error);
       throw error;
     }
-  }
+  },
 };

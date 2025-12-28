@@ -34,12 +34,10 @@ const DD_SITE = argv.site || process.env.DD_SITE || "datadoghq.com";
 // Define service-specific endpoints for different Datadog services
 // This follows Datadog's recommended approach for configuring regional endpoints
 const DD_LOGS_SITE = argv.logsSite || process.env.DD_LOGS_SITE || DD_SITE;
-const DD_METRICS_SITE =
-  argv.metricsSite || process.env.DD_METRICS_SITE || DD_SITE;
+const DD_METRICS_SITE = argv.metricsSite || process.env.DD_METRICS_SITE || DD_SITE;
 
 // Remove https:// prefix if it exists to prevent double prefix issues
-const cleanupUrl = (url: string) =>
-  url.startsWith("https://") ? url.substring(8) : url;
+const cleanupUrl = (url: string) => (url.startsWith("https://") ? url.substring(8) : url);
 
 // Store clean values in process.env for backwards compatibility
 process.env.DD_API_KEY = DD_API_KEY;
@@ -80,8 +78,7 @@ aggregateLogs.initialize();
 const server = new McpServer({
   name: "datadog",
   version: "1.0.0",
-  description:
-    "MCP Server for Datadog API, enabling interaction with Datadog resources"
+  description: "MCP Server for Datadog API, enabling interaction with Datadog resources",
 });
 
 // Add tools individually, using their schemas directly
@@ -92,28 +89,28 @@ server.tool(
     groupStates: z.array(z.string()).optional(),
     tags: z.string().optional(),
     monitorTags: z.string().optional(),
-    limit: z.number().default(100)
+    limit: z.number().default(100),
   },
   async (args) => {
     const result = await getMonitors.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 server.tool(
   "get-monitor",
   "Get detailed information about a specific Datadog monitor by its ID. Use this to retrieve the complete configuration, status, and other details of a single monitor.",
   {
-    monitorId: z.number()
+    monitorId: z.number(),
   },
   async (args) => {
     const result = await getMonitor.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -121,56 +118,56 @@ server.tool(
   "Retrieve a list of all dashboards from Datadog. Useful for discovering available dashboards and their IDs for further exploration.",
   {
     filterConfigured: z.boolean().optional(),
-    limit: z.number().default(100)
+    limit: z.number().default(100),
   },
   async (args) => {
     const result = await getDashboards.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 server.tool(
   "get-dashboard",
   "Get the complete definition of a specific Datadog dashboard by its ID. Returns all widgets, layout, and configuration details.",
   {
-    dashboardId: z.string()
+    dashboardId: z.string(),
   },
   async (args) => {
     const result = await getDashboard.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 server.tool(
   "get-metrics",
   "List available metrics from Datadog. Optionally use the q parameter to search for specific metrics matching a pattern. Helpful for discovering metrics to use in monitors or dashboards.",
   {
-    q: z.string().optional()
+    q: z.string().optional(),
   },
   async (args) => {
     const result = await getMetrics.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 server.tool(
   "get-metric-metadata",
   "Retrieve detailed metadata about a specific metric, including its type, description, unit, and other attributes. Use this to understand a metric's meaning and proper usage.",
   {
-    metricName: z.string()
+    metricName: z.string(),
   },
   async (args) => {
     const result = await getMetricMetadata.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -184,14 +181,14 @@ server.tool(
     tags: z.string().optional(),
     unaggregated: z.boolean().optional(),
     excludeAggregation: z.boolean().optional(),
-    limit: z.number().default(100)
+    limit: z.number().default(100),
   },
   async (args) => {
     const result = await getEvents.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -202,14 +199,14 @@ server.tool(
     pageSize: z.number().optional(),
     pageOffset: z.number().optional(),
     query: z.string().optional(),
-    limit: z.number().default(100)
+    limit: z.number().default(100),
   },
   async (args) => {
     const result = await getIncidents.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -221,24 +218,24 @@ server.tool(
         query: z.string().optional(),
         from: z.string().optional(),
         to: z.string().optional(),
-        indexes: z.array(z.string()).optional()
+        indexes: z.array(z.string()).optional(),
       })
       .optional(),
     sort: z.string().optional(),
     page: z
       .object({
         limit: z.number().optional(),
-        cursor: z.string().optional()
+        cursor: z.string().optional(),
       })
       .optional(),
-    limit: z.number().default(100)
+    limit: z.number().default(100),
   },
   async (args) => {
     const result = await searchLogs.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 server.tool(
@@ -250,7 +247,7 @@ server.tool(
         query: z.string().optional(),
         from: z.string().optional(),
         to: z.string().optional(),
-        indexes: z.array(z.string()).optional()
+        indexes: z.array(z.string()).optional(),
       })
       .optional(),
     compute: z
@@ -258,8 +255,8 @@ server.tool(
         z.object({
           aggregation: z.string(),
           metric: z.string().optional(),
-          type: z.string().optional()
-        })
+          type: z.string().optional(),
+        }),
       )
       .optional(),
     groupBy: z
@@ -270,24 +267,24 @@ server.tool(
           sort: z
             .object({
               aggregation: z.string(),
-              order: z.string()
+              order: z.string(),
             })
-            .optional()
-        })
+            .optional(),
+        }),
       )
       .optional(),
     options: z
       .object({
-        timezone: z.string().optional()
+        timezone: z.string().optional(),
       })
-      .optional()
+      .optional(),
   },
   async (args) => {
     const result = await aggregateLogs.execute(args);
     return {
-      content: [{ type: "text", text: JSON.stringify(result) }]
+      content: [{ type: "text", text: JSON.stringify(result) }],
     };
-  }
+  },
 );
 
 // Start the server

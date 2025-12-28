@@ -18,31 +18,23 @@ export const getEvents = {
     const configOpts = {
       authMethods: {
         apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY
-      }
+        appKeyAuth: process.env.DD_APP_KEY,
+      },
     };
 
     configuration = client.createConfiguration(configOpts);
 
     if (process.env.DD_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_SITE
+        site: process.env.DD_SITE,
       });
     }
   },
 
   execute: async (params: GetEventsParams) => {
     try {
-      const {
-        start,
-        end,
-        priority,
-        sources,
-        tags,
-        unaggregated,
-        excludeAggregation,
-        limit
-      } = params;
+      const { start, end, priority, sources, tags, unaggregated, excludeAggregation, limit } =
+        params;
 
       const apiInstance = new v1.EventsApi(configuration);
 
@@ -53,7 +45,7 @@ export const getEvents = {
         sources: sources,
         tags: tags,
         unaggregated: unaggregated,
-        excludeAggregate: excludeAggregation
+        excludeAggregate: excludeAggregation,
       };
 
       const response = await apiInstance.listEvents(apiParams);
@@ -68,5 +60,5 @@ export const getEvents = {
       console.error("Error fetching events:", error);
       throw error;
     }
-  }
+  },
 };

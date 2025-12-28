@@ -11,15 +11,15 @@ export const getMonitor = {
     const configOpts = {
       authMethods: {
         apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY
-      }
+        appKeyAuth: process.env.DD_APP_KEY,
+      },
     };
 
     configuration = client.createConfiguration(configOpts);
 
     if (process.env.DD_METRICS_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_METRICS_SITE
+        site: process.env.DD_METRICS_SITE,
       });
     }
   },
@@ -31,7 +31,7 @@ export const getMonitor = {
       const apiInstance = new v1.MonitorsApi(configuration);
 
       const apiParams: v1.MonitorsApiGetMonitorRequest = {
-        monitorId: monitorId
+        monitorId: monitorId,
       };
 
       const response = await apiInstance.getMonitor(apiParams);
@@ -40,5 +40,5 @@ export const getMonitor = {
       console.error(`Error fetching monitor ${params.monitorId}:`, error);
       throw error;
     }
-  }
+  },
 };

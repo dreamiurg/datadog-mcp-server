@@ -32,15 +32,15 @@ export const aggregateLogs = {
     const configOpts = {
       authMethods: {
         apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY
-      }
+        appKeyAuth: process.env.DD_APP_KEY,
+      },
     };
 
     configuration = client.createConfiguration(configOpts);
 
     if (process.env.DD_LOGS_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_LOGS_SITE
+        site: process.env.DD_LOGS_SITE,
       });
     }
 
@@ -60,26 +60,26 @@ export const aggregateLogs = {
       const headers = {
         "Content-Type": "application/json",
         "DD-API-KEY": process.env.DD_API_KEY || "",
-        "DD-APPLICATION-KEY": process.env.DD_APP_KEY || ""
+        "DD-APPLICATION-KEY": process.env.DD_APP_KEY || "",
       };
 
       const body = {
         filter: filter,
         compute: compute,
         group_by: groupBy,
-        options: options
+        options: options,
       };
 
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: headers,
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
         throw {
           status: response.status,
-          message: await response.text()
+          message: await response.text(),
         };
       }
 
@@ -88,15 +88,15 @@ export const aggregateLogs = {
     } catch (error: any) {
       if (error.status === 403) {
         console.error(
-          "Authorization failed (403 Forbidden): Check that your API key and Application key are valid and have sufficient permissions to access log analytics."
+          "Authorization failed (403 Forbidden): Check that your API key and Application key are valid and have sufficient permissions to access log analytics.",
         );
         throw new Error(
-          "Datadog API authorization failed. Please verify your API and Application keys have the correct permissions."
+          "Datadog API authorization failed. Please verify your API and Application keys have the correct permissions.",
         );
       } else {
         console.error("Error aggregating logs:", error);
         throw error;
       }
     }
-  }
+  },
 };

@@ -11,15 +11,15 @@ export const getDashboard = {
     const configOpts = {
       authMethods: {
         apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY
-      }
+        appKeyAuth: process.env.DD_APP_KEY,
+      },
     };
 
     configuration = client.createConfiguration(configOpts);
 
     if (process.env.DD_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_SITE
+        site: process.env.DD_SITE,
       });
     }
   },
@@ -31,7 +31,7 @@ export const getDashboard = {
       const apiInstance = new v1.DashboardsApi(configuration);
 
       const apiParams: v1.DashboardsApiGetDashboardRequest = {
-        dashboardId: dashboardId
+        dashboardId: dashboardId,
       };
 
       const response = await apiInstance.getDashboard(apiParams);
@@ -40,5 +40,5 @@ export const getDashboard = {
       console.error(`Error fetching dashboard ${params.dashboardId}:`, error);
       throw error;
     }
-  }
+  },
 };

@@ -15,15 +15,15 @@ export const getIncidents = {
     const configOpts = {
       authMethods: {
         apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY
-      }
+        appKeyAuth: process.env.DD_APP_KEY,
+      },
     };
 
     configuration = client.createConfiguration(configOpts);
 
     if (process.env.DD_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_SITE
+        site: process.env.DD_SITE,
       });
     }
 
@@ -66,15 +66,15 @@ export const getIncidents = {
     } catch (error: any) {
       if (error.status === 403) {
         console.error(
-          "Authorization failed (403 Forbidden): Check that your API key and Application key are valid and have sufficient permissions to access incidents."
+          "Authorization failed (403 Forbidden): Check that your API key and Application key are valid and have sufficient permissions to access incidents.",
         );
         throw new Error(
-          "Datadog API authorization failed. Please verify your API and Application keys have the correct permissions."
+          "Datadog API authorization failed. Please verify your API and Application keys have the correct permissions.",
         );
       } else {
         console.error("Error fetching incidents:", error);
         throw error;
       }
     }
-  }
+  },
 };

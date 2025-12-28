@@ -11,15 +11,15 @@ export const getMetrics = {
     const configOpts = {
       authMethods: {
         apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY
-      }
+        appKeyAuth: process.env.DD_APP_KEY,
+      },
     };
 
     configuration = client.createConfiguration(configOpts);
 
     if (process.env.DD_METRICS_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_METRICS_SITE
+        site: process.env.DD_METRICS_SITE,
       });
     }
   },
@@ -33,7 +33,7 @@ export const getMetrics = {
       const queryStr = q || "*";
 
       const apiParams: v1.MetricsApiListMetricsRequest = {
-        q: queryStr
+        q: queryStr,
       };
 
       const response = await apiInstance.listMetrics(apiParams);
@@ -42,5 +42,5 @@ export const getMetrics = {
       console.error("Error fetching metrics:", error);
       throw error;
     }
-  }
+  },
 };
