@@ -15,12 +15,16 @@ const index_js_1 = require("./lib/index.js");
 const aggregateLogs_js_1 = require("./tools/aggregateLogs.js");
 const getDashboard_js_1 = require("./tools/getDashboard.js");
 const getDashboards_js_1 = require("./tools/getDashboards.js");
+const getDowntimes_js_1 = require("./tools/getDowntimes.js");
 const getEvents_js_1 = require("./tools/getEvents.js");
+const getHosts_js_1 = require("./tools/getHosts.js");
 const getIncidents_js_1 = require("./tools/getIncidents.js");
 const getMetricMetadata_js_1 = require("./tools/getMetricMetadata.js");
 const getMetrics_js_1 = require("./tools/getMetrics.js");
 const getMonitor_js_1 = require("./tools/getMonitor.js");
 const getMonitors_js_1 = require("./tools/getMonitors.js");
+const getSLO_js_1 = require("./tools/getSLO.js");
+const getSLOs_js_1 = require("./tools/getSLOs.js");
 const searchLogs_js_1 = require("./tools/searchLogs.js");
 // Helper function to mask sensitive credentials for logging
 const maskCredential = (credential) => {
@@ -97,6 +101,14 @@ searchLogs_js_1.searchLogs.initialize();
 index_js_1.logger.info({ tool: "search-logs" }, "Tool initialized");
 aggregateLogs_js_1.aggregateLogs.initialize();
 index_js_1.logger.info({ tool: "aggregate-logs" }, "Tool initialized");
+getHosts_js_1.getHosts.initialize();
+index_js_1.logger.info({ tool: "get-hosts" }, "Tool initialized");
+getDowntimes_js_1.getDowntimes.initialize();
+index_js_1.logger.info({ tool: "get-downtimes" }, "Tool initialized");
+getSLOs_js_1.getSLOs.initialize();
+index_js_1.logger.info({ tool: "get-slos" }, "Tool initialized");
+getSLO_js_1.getSLO.initialize();
+index_js_1.logger.info({ tool: "get-slo" }, "Tool initialized");
 // Set up MCP server
 const server = new mcp_js_1.McpServer({
     name: "datadog",
@@ -104,7 +116,7 @@ const server = new mcp_js_1.McpServer({
     description: "MCP Server for Datadog API, enabling interaction with Datadog resources",
 });
 // Add tools individually, using their schemas directly
-server.tool("get-monitors", "Fetch monitors from Datadog with optional filtering. Use groupStates to filter by monitor status (e.g., 'alert', 'warn', 'no data'), tags or monitorTags to filter by tag criteria, and limit to control result size.", {
+server.tool("get-monitors", "List Datadog monitors with filtering. Use for questions like 'show alerting monitors', 'what monitors are in warning state', or 'monitors tagged with team:platform'. Filter by groupStates: 'alert', 'warn', 'no data', 'ok'. Use get-monitor for a single monitor's full details.", {
     groupStates: zod_1.z.array(zod_1.z.string()).optional(),
     tags: zod_1.z.string().optional(),
     monitorTags: zod_1.z.string().optional(),
@@ -120,7 +132,7 @@ server.tool("get-monitors", "Fetch monitors from Datadog with optional filtering
         content: [{ type: "text", text: JSON.stringify(result) }],
     };
 });
-server.tool("get-monitor", "Get detailed information about a specific Datadog monitor by its ID. Use this to retrieve the complete configuration, status, and other details of a single monitor.", {
+server.tool("get-monitor", "Get full details for a specific monitor by ID. Use after get-monitors to dive deeper into a specific monitor's configuration, thresholds, query, and current state. Returns complete monitor definition.", {
     monitorId: zod_1.z.number(),
 }, async (args) => {
     const startTime = Date.now();
@@ -132,7 +144,7 @@ server.tool("get-monitor", "Get detailed information about a specific Datadog mo
         content: [{ type: "text", text: JSON.stringify(result) }],
     };
 });
-server.tool("get-dashboards", "Retrieve a list of all dashboards from Datadog. Useful for discovering available dashboards and their IDs for further exploration.", {
+server.tool("get-dashboards", "List all Datadog dashboards. Use to answer 'what dashboards exist', 'find dashboard for API metrics', or to get dashboard IDs for get-dashboard. Returns dashboard names, IDs, and URLs.", {
     filterConfigured: zod_1.z.boolean().optional(),
     limit: zod_1.z.number().default(100),
 }, async (args) => {
@@ -148,7 +160,7 @@ server.tool("get-dashboards", "Retrieve a list of all dashboards from Datadog. U
         content: [{ type: "text", text: JSON.stringify(result) }],
     };
 });
-server.tool("get-dashboard", "Get the complete definition of a specific Datadog dashboard by its ID. Returns all widgets, layout, and configuration details.", {
+server.tool("get-dashboard", "Get full dashboard definition by ID. Returns all widgets, queries, and layout. Use after get-dashboards to explore a specific dashboard's contents and understand what metrics/data it displays.", {
     dashboardId: zod_1.z.string(),
 }, async (args) => {
     const startTime = Date.now();
@@ -160,7 +172,7 @@ server.tool("get-dashboard", "Get the complete definition of a specific Datadog 
         content: [{ type: "text", text: JSON.stringify(result) }],
     };
 });
-server.tool("get-metrics", "List available metrics from Datadog. Optionally use the q parameter to search for specific metrics matching a pattern. Helpful for discovering metrics to use in monitors or dashboards.", {
+server.tool("get-metrics", "Search for available Datadog metrics by name pattern. Use to discover metrics like 'what CPU metrics exist' or 'find metrics for service X'. Parameter q searches metric names (e.g., q='aws.ec2' finds all EC2 metrics).", {
     q: zod_1.z.string().optional(),
 }, async (args) => {
     const startTime = Date.now();
@@ -173,7 +185,7 @@ server.tool("get-metrics", "List available metrics from Datadog. Optionally use 
         content: [{ type: "text", text: JSON.stringify(result) }],
     };
 });
-server.tool("get-metric-metadata", "Retrieve detailed metadata about a specific metric, including its type, description, unit, and other attributes. Use this to understand a metric's meaning and proper usage.", {
+server.tool("get-metric-metadata", "Get metadata for a specific metric name. Returns type (gauge/count/rate), unit, description, and integration. Use when you need to understand what a metric measures, e.g., 'what does system.cpu.user mean'.", {
     metricName: zod_1.z.string(),
 }, async (args) => {
     const startTime = Date.now();
@@ -185,7 +197,7 @@ server.tool("get-metric-metadata", "Retrieve detailed metadata about a specific 
         content: [{ type: "text", text: JSON.stringify(result) }],
     };
 });
-server.tool("get-events", "Search for events in Datadog within a specified time range. Events include deployments, alerts, comments, and other activities. Useful for correlating system behaviors with specific events.", {
+server.tool("get-events", "Query Datadog events within a time range. Events include deployments, alerts, configuration changes, and comments. Use for 'what happened yesterday', 'show deployment events', or correlating incidents with changes. Requires start/end as Unix timestamps.", {
     start: zod_1.z.number(),
     end: zod_1.z.number(),
     priority: zod_1.z.enum(["normal", "low"]).optional(),
@@ -205,7 +217,7 @@ server.tool("get-events", "Search for events in Datadog within a specified time 
         content: [{ type: "text", text: JSON.stringify(result) }],
     };
 });
-server.tool("get-incidents", "List incidents from Datadog's incident management system. Can filter by active/archived status and use query strings to find specific incidents. Helpful for reviewing current or past incidents.", {
+server.tool("get-incidents", "List Datadog incidents for incident management. Use for 'show active incidents', 'what incidents happened this week', or 'find incidents related to payments'. Includes severity, status, commander, and timeline.", {
     includeArchived: zod_1.z.boolean().optional(),
     pageSize: zod_1.z.number().optional(),
     pageOffset: zod_1.z.number().optional(),
@@ -224,7 +236,7 @@ server.tool("get-incidents", "List incidents from Datadog's incident management 
         content: [{ type: "text", text: JSON.stringify(result) }],
     };
 });
-server.tool("search-logs", "Search logs in Datadog with advanced filtering options. Use filter.query for search terms (e.g., 'service:web-app status:error'), from/to for time ranges (e.g., 'now-15m', 'now'), and sort to order results. Essential for investigating application issues.", {
+server.tool("search-logs", "Search and retrieve log entries from Datadog. Use for 'find errors in auth service', 'show logs from last hour', or investigating issues. Query syntax: 'service:web-app status:error', time range: 'now-15m' to 'now'. Returns actual log messages. Use aggregate-logs for counts/stats instead.", {
     filter: zod_1.z
         .object({
         query: zod_1.z.string().optional(),
@@ -252,7 +264,7 @@ server.tool("search-logs", "Search logs in Datadog with advanced filtering optio
         content: [{ type: "text", text: JSON.stringify(result) }],
     };
 });
-server.tool("aggregate-logs", "Perform analytical queries and aggregations on log data. Essential for calculating metrics (count, avg, sum, etc.), grouping data by fields, and creating statistical summaries from logs. Use this when you need to analyze patterns or extract metrics from log data.", {
+server.tool("aggregate-logs", "Compute statistics and aggregations on logs. Use for 'how many errors per service', 'count logs by status', or 'average response time from logs'. Supports count, avg, sum, min, max, percentiles. Use search-logs to see actual log content instead.", {
     filter: zod_1.z
         .object({
         query: zod_1.z.string().optional(),
@@ -291,6 +303,82 @@ server.tool("aggregate-logs", "Perform analytical queries and aggregations on lo
     const result = await aggregateLogs_js_1.aggregateLogs.execute(args);
     const durationMs = Date.now() - startTime;
     index_js_1.logger.debug({ tool: "aggregate-logs", durationMs }, "Tool execution completed");
+    return {
+        content: [{ type: "text", text: JSON.stringify(result) }],
+    };
+});
+server.tool("get-hosts", "List infrastructure hosts reporting to Datadog. Use for 'show production hosts', 'which hosts are muted', 'hosts running agent version X'. Returns host names, IPs, apps, agent info, and mute status. Essential for infrastructure visibility during incidents.", {
+    filter: zod_1.z.string().optional().describe("Filter hosts by name substring"),
+    sortField: zod_1.z.string().optional().describe("Field to sort by (e.g., 'name', 'apps', 'cpu')"),
+    sortDir: zod_1.z.string().optional().describe("Sort direction ('asc' or 'desc')"),
+    start: zod_1.z.number().optional().describe("Starting offset for pagination"),
+    count: zod_1.z.number().optional().describe("Number of hosts to return (max 1000)"),
+    from: zod_1.z.number().optional().describe("Unix timestamp to filter hosts seen after"),
+    includeMutedHostsData: zod_1.z.boolean().optional().describe("Include mute status and expiry"),
+    includeHostsMetadata: zod_1.z
+        .boolean()
+        .optional()
+        .describe("Include host metadata (agent version, platform)"),
+}, async (args) => {
+    const startTime = Date.now();
+    index_js_1.logger.info({ tool: "get-hosts", args }, "Tool call started");
+    const result = await getHosts_js_1.getHosts.execute(args);
+    const durationMs = Date.now() - startTime;
+    const resultCount = result && "hostList" in result ? result.hostList?.length || 0 : 0;
+    index_js_1.logger.debug({ tool: "get-hosts", resultCount, durationMs }, "Tool execution completed");
+    return {
+        content: [{ type: "text", text: JSON.stringify(result) }],
+    };
+});
+server.tool("get-downtimes", "List scheduled maintenance downtimes in Datadog. Use for 'are there any active downtimes', 'what's scheduled for maintenance', 'why is this monitor muted'. Shows scope, schedule, and duration. Critical for on-call to understand muted monitors.", {
+    currentOnly: zod_1.z.boolean().optional().describe("Return only currently active downtimes"),
+    include: zod_1.z
+        .string()
+        .optional()
+        .describe("Comma-separated list to include (e.g., 'created_by,monitor')"),
+    pageOffset: zod_1.z.number().optional().describe("Pagination offset"),
+    pageLimit: zod_1.z.number().optional().describe("Number of downtimes to return"),
+}, async (args) => {
+    const startTime = Date.now();
+    index_js_1.logger.info({ tool: "get-downtimes", args }, "Tool call started");
+    const result = await getDowntimes_js_1.getDowntimes.execute(args);
+    const durationMs = Date.now() - startTime;
+    const resultCount = result && "data" in result ? result.data?.length || 0 : 0;
+    index_js_1.logger.debug({ tool: "get-downtimes", resultCount, durationMs }, "Tool execution completed");
+    return {
+        content: [{ type: "text", text: JSON.stringify(result) }],
+    };
+});
+server.tool("get-slos", "List Service Level Objectives (SLOs). Use for 'show all SLOs', 'SLOs for team platform', 'which SLOs are at risk'. Returns SLO names, targets, and current status. Use get-slo for detailed error budget and history of a specific SLO.", {
+    ids: zod_1.z.string().optional().describe("Comma-separated list of SLO IDs to fetch"),
+    query: zod_1.z.string().optional().describe("Search SLOs by name"),
+    tagsQuery: zod_1.z.string().optional().describe("Filter by tags (e.g., 'team:platform,env:prod')"),
+    metricsQuery: zod_1.z.string().optional().describe("Filter by metrics used in SLO"),
+    limit: zod_1.z.number().optional().describe("Number of SLOs to return"),
+    offset: zod_1.z.number().optional().describe("Pagination offset"),
+}, async (args) => {
+    const startTime = Date.now();
+    index_js_1.logger.info({ tool: "get-slos", args }, "Tool call started");
+    const result = await getSLOs_js_1.getSLOs.execute(args);
+    const durationMs = Date.now() - startTime;
+    const resultCount = result && "data" in result ? result.data?.length || 0 : 0;
+    index_js_1.logger.debug({ tool: "get-slos", resultCount, durationMs }, "Tool execution completed");
+    return {
+        content: [{ type: "text", text: JSON.stringify(result) }],
+    };
+});
+server.tool("get-slo", "Get detailed SLO information by ID. Returns error budget remaining, burn rate, target vs actual, thresholds, and configured alerts. Use after get-slos to understand a specific SLO's health and history.", {
+    sloId: zod_1.z.string().describe("The ID of the SLO to retrieve"),
+    withConfiguredAlertIds: zod_1.z
+        .boolean()
+        .optional()
+        .describe("Include IDs of monitors configured as SLO alerts"),
+}, async (args) => {
+    const startTime = Date.now();
+    index_js_1.logger.info({ tool: "get-slo", args }, "Tool call started");
+    const result = await getSLO_js_1.getSLO.execute(args);
+    const durationMs = Date.now() - startTime;
+    index_js_1.logger.debug({ tool: "get-slo", durationMs }, "Tool execution completed");
     return {
         content: [{ type: "text", text: JSON.stringify(result) }],
     };

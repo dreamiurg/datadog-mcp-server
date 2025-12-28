@@ -41,7 +41,7 @@ describe("errors", () => {
   });
 
   describe("handleApiError", () => {
-    it("throws 403 error with authorization message", () => {
+    it("throws 403 error with authorization message and scope hint", () => {
       const rawError = { status: 403 };
 
       expect(() => handleApiError(rawError, "fetching monitors")).toThrow(DatadogApiError);
@@ -52,7 +52,32 @@ describe("errors", () => {
         const error = e as DatadogApiError;
         expect(error.statusCode).toBe(403);
         expect(error.message).toContain("authorization failed");
+        expect(error.message).toContain("monitors_read");
+        expect(error.message).toContain("Application Key");
         expect(error.context).toBe("fetching monitors");
+      }
+    });
+
+    it("throws 403 error with scope hint for logs operations", () => {
+      const rawError = { status: 403 };
+
+      try {
+        handleApiError(rawError, "searching logs");
+      } catch (e) {
+        const error = e as DatadogApiError;
+        expect(error.message).toContain("logs_read_data");
+      }
+    });
+
+    it("throws 403 error without scope hint for unknown context", () => {
+      const rawError = { status: 403 };
+
+      try {
+        handleApiError(rawError, "unknown operation");
+      } catch (e) {
+        const error = e as DatadogApiError;
+        expect(error.message).toContain("authorization failed");
+        expect(error.message).not.toContain("requires the");
       }
     });
 

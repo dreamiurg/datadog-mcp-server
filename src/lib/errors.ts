@@ -1,6 +1,27 @@
 import { logger } from "./logger.js";
 
 /**
+ * Maps operation contexts to their required Datadog Application Key scopes.
+ * Used to provide helpful error messages when permission issues occur.
+ */
+const SCOPE_HINTS: Record<string, string> = {
+  "fetching monitors": "monitors_read",
+  "fetching monitor": "monitors_read",
+  "fetching dashboards": "dashboards_read",
+  "fetching dashboard": "dashboards_read",
+  "fetching metrics": "metrics_read",
+  "fetching metric metadata": "metrics_read",
+  "fetching events": "events_read",
+  "fetching incidents": "incident_read",
+  "searching logs": "logs_read_data",
+  "aggregating logs": "logs_read_data",
+  "fetching hosts": "hosts_read",
+  "fetching downtimes": "monitors_downtime",
+  "fetching SLOs": "slos_read",
+  "fetching SLO": "slos_read",
+};
+
+/**
  * Custom error class for Datadog API errors with status code information
  */
 export class DatadogApiError extends Error {
@@ -43,12 +64,18 @@ export function handleApiError(error: unknown, context: string): never {
   const statusCode = isRawApiError(error) ? (error.status ?? error.code) : undefined;
 
   if (statusCode === 403) {
+    const requiredScope = SCOPE_HINTS[context];
+    const scopeHint = requiredScope
+      ? ` This operation requires the '${requiredScope}' scope on your Application Key.`
+      : "";
+
     logger.warn(
-      { statusCode: 403, context },
-      "Authorization failed (403 Forbidden): Check that your API key and Application key are valid and have sufficient permissions.",
+      { statusCode: 403, context, requiredScope },
+      `Authorization failed (403 Forbidden): Check that your API key and Application key are valid and have sufficient permissions.${scopeHint}`,
     );
+
     throw new DatadogApiError(
-      "Datadog API authorization failed. Please verify your API and Application keys have the correct permissions.",
+      `Datadog API authorization failed while ${context}. Your Application Key may be missing required scope permissions.${scopeHint} Go to Datadog Organization Settings → Application Keys to add the required scope.`,
       403,
       context,
     );

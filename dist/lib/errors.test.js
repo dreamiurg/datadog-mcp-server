@@ -33,7 +33,7 @@ const errors_js_1 = require("./errors.js");
         });
     });
     (0, vitest_1.describe)("handleApiError", () => {
-        (0, vitest_1.it)("throws 403 error with authorization message", () => {
+        (0, vitest_1.it)("throws 403 error with authorization message and scope hint", () => {
             const rawError = { status: 403 };
             (0, vitest_1.expect)(() => (0, errors_js_1.handleApiError)(rawError, "fetching monitors")).toThrow(errors_js_1.DatadogApiError);
             try {
@@ -43,7 +43,30 @@ const errors_js_1 = require("./errors.js");
                 const error = e;
                 (0, vitest_1.expect)(error.statusCode).toBe(403);
                 (0, vitest_1.expect)(error.message).toContain("authorization failed");
+                (0, vitest_1.expect)(error.message).toContain("monitors_read");
+                (0, vitest_1.expect)(error.message).toContain("Application Key");
                 (0, vitest_1.expect)(error.context).toBe("fetching monitors");
+            }
+        });
+        (0, vitest_1.it)("throws 403 error with scope hint for logs operations", () => {
+            const rawError = { status: 403 };
+            try {
+                (0, errors_js_1.handleApiError)(rawError, "searching logs");
+            }
+            catch (e) {
+                const error = e;
+                (0, vitest_1.expect)(error.message).toContain("logs_read_data");
+            }
+        });
+        (0, vitest_1.it)("throws 403 error without scope hint for unknown context", () => {
+            const rawError = { status: 403 };
+            try {
+                (0, errors_js_1.handleApiError)(rawError, "unknown operation");
+            }
+            catch (e) {
+                const error = e;
+                (0, vitest_1.expect)(error.message).toContain("authorization failed");
+                (0, vitest_1.expect)(error.message).not.toContain("requires the");
             }
         });
         (0, vitest_1.it)("throws 404 error with not found message", () => {
@@ -122,6 +145,34 @@ const errors_js_1 = require("./errors.js");
                 const error = e;
                 (0, vitest_1.expect)(error.statusCode).toBe(404);
             }
+        });
+        (0, vitest_1.it)("logs error for 500+ status codes", () => {
+            const rawError = { status: 500 };
+            (0, vitest_1.expect)(() => (0, errors_js_1.handleApiError)(rawError, "server error test")).toThrow(errors_js_1.DatadogApiError);
+            try {
+                (0, errors_js_1.handleApiError)(rawError, "server error test");
+            }
+            catch (e) {
+                const error = e;
+                (0, vitest_1.expect)(error.statusCode).toBe(500);
+                (0, vitest_1.expect)(error.context).toBe("server error test");
+            }
+        });
+        (0, vitest_1.it)("logs warning for 400-499 status codes (non-specific)", () => {
+            const rawError = { status: 401 };
+            (0, vitest_1.expect)(() => (0, errors_js_1.handleApiError)(rawError, "auth error test")).toThrow(errors_js_1.DatadogApiError);
+            try {
+                (0, errors_js_1.handleApiError)(rawError, "auth error test");
+            }
+            catch (e) {
+                const error = e;
+                (0, vitest_1.expect)(error.statusCode).toBe(401);
+                (0, vitest_1.expect)(error.context).toBe("auth error test");
+            }
+        });
+        (0, vitest_1.it)("logs error for unknown status codes", () => {
+            const rawError = { status: 0 };
+            (0, vitest_1.expect)(() => (0, errors_js_1.handleApiError)(rawError, "unknown status test")).toThrow(errors_js_1.DatadogApiError);
         });
     });
 });
