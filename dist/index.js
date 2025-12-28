@@ -167,9 +167,7 @@ server.tool("get-metrics", "List available metrics from Datadog. Optionally use 
     index_js_1.logger.info({ tool: "get-metrics", args }, "Tool call started");
     const result = await getMetrics_js_1.getMetrics.execute(args);
     const durationMs = Date.now() - startTime;
-    const resultCount = result && "metrics" in result && Array.isArray(result.metrics)
-        ? result.metrics.length
-        : 0;
+    const resultCount = result && "metrics" in result && Array.isArray(result.metrics) ? result.metrics.length : 0;
     index_js_1.logger.debug({ tool: "get-metrics", resultCount, durationMs }, "Tool execution completed");
     return {
         content: [{ type: "text", text: JSON.stringify(result) }],
@@ -201,9 +199,7 @@ server.tool("get-events", "Search for events in Datadog within a specified time 
     index_js_1.logger.info({ tool: "get-events", args }, "Tool call started");
     const result = await getEvents_js_1.getEvents.execute(args);
     const durationMs = Date.now() - startTime;
-    const resultCount = result && "events" in result && Array.isArray(result.events)
-        ? result.events.length
-        : 0;
+    const resultCount = result && "events" in result && Array.isArray(result.events) ? result.events.length : 0;
     index_js_1.logger.debug({ tool: "get-events", resultCount, durationMs }, "Tool execution completed");
     return {
         content: [{ type: "text", text: JSON.stringify(result) }],
@@ -250,9 +246,7 @@ server.tool("search-logs", "Search logs in Datadog with advanced filtering optio
     index_js_1.logger.info({ tool: "search-logs", args }, "Tool call started");
     const result = await searchLogs_js_1.searchLogs.execute(args);
     const durationMs = Date.now() - startTime;
-    const resultCount = result && "logs" in result && Array.isArray(result.logs)
-        ? result.logs.length
-        : 0;
+    const resultCount = result && "logs" in result && Array.isArray(result.logs) ? result.logs.length : 0;
     index_js_1.logger.debug({ tool: "search-logs", resultCount, durationMs }, "Tool execution completed");
     return {
         content: [{ type: "text", text: JSON.stringify(result) }],

@@ -15,7 +15,14 @@ exports.getMonitors = {
         if (!apiInstance) {
             throw new Error("getMonitors not initialized. Call initialize() first.");
         }
-        log.debug({ filters: { groupStates: params.groupStates, tags: params.tags, monitorTags: params.monitorTags, limit: params.limit } }, "executing get-monitors");
+        log.debug({
+            filters: {
+                groupStates: params.groupStates,
+                tags: params.tags,
+                monitorTags: params.monitorTags,
+                limit: params.limit,
+            },
+        }, "executing get-monitors");
         try {
             const { groupStates, tags, monitorTags, limit } = params;
             const apiParams = {

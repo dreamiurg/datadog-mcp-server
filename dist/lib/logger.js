@@ -8,26 +8,47 @@ exports.createToolLogger = createToolLogger;
 exports.createHttpLogger = createHttpLogger;
 const pino_1 = __importDefault(require("pino"));
 /**
+ * Detect if we should use pretty printing for development.
+ * Enable with LOG_FORMAT=pretty or NODE_ENV=development
+ */
+const isPretty = process.env.LOG_FORMAT === "pretty" || process.env.NODE_ENV === "development";
+/**
+ * Transport configuration based on environment.
+ * - Development: pretty-printed, colorized output
+ * - Production: JSON format for log aggregators
+ */
+const transport = isPretty
+    ? {
+        target: "pino-pretty",
+        options: {
+            destination: 2, // stderr
+            colorize: true,
+            translateTime: "HH:MM:ss",
+            ignore: "pid,hostname",
+        },
+    }
+    : {
+        target: "pino/file",
+        options: { destination: 2 }, // stderr
+    };
+/**
  * Structured logger for the Datadog MCP Server.
  *
  * Logs to stderr to avoid interfering with MCP protocol on stdout.
- * Uses JSON format for structured logging that can be parsed by log aggregators.
+ *
+ * Configuration:
+ * - LOG_LEVEL: debug, info, warn, error (default: info)
+ * - LOG_FORMAT: pretty for human-readable, json for structured (default: json)
+ * - NODE_ENV: development enables pretty format automatically
  */
 exports.logger = (0, pino_1.default)({
     name: "datadog-mcp-server",
     level: process.env.LOG_LEVEL || "info",
-    // MCP uses stdout for protocol communication, so logs must go to stderr
-    transport: {
-        target: "pino/file",
-        options: { destination: 2 }, // 2 = stderr
-    },
-    // Add timestamp in ISO format for readability
+    transport,
     timestamp: pino_1.default.stdTimeFunctions.isoTime,
-    // Base context included in every log
     base: {
         pid: process.pid,
     },
-    // Format error objects properly
     serializers: {
         err: pino_1.default.stdSerializers.err,
         error: pino_1.default.stdSerializers.err,

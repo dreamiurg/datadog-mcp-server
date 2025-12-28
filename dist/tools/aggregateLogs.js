@@ -22,7 +22,13 @@ exports.aggregateLogs = {
         }
         try {
             const { filter, compute, groupBy, options } = params;
-            log.debug({ query: filter?.query, from: filter?.from, to: filter?.to, computeCount: compute?.length || 0, groupByCount: groupBy?.length || 0 }, "execute() called");
+            log.debug({
+                query: filter?.query,
+                from: filter?.from,
+                to: filter?.to,
+                computeCount: compute?.length || 0,
+                groupByCount: groupBy?.length || 0,
+            }, "execute() called");
             const body = {
                 filter,
                 compute,
