@@ -8,14 +8,15 @@ on:
   schedule:
     - cron: "0 3 * * 0"
 
-permissions:
-  security-events: write
-  contents: read
+permissions: {}
 
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
 
     steps:
       - name: Checkout code
