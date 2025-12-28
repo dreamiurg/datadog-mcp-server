@@ -9,13 +9,6 @@
 
 > **Query Datadog from AI assistants.** Access monitors, dashboards, logs, metrics, and incidents directly from Claude, Cursor, VS Code, and other MCP-compatible clients.
 
-<p align="center">
-  <img src="https://imgix.datadoghq.com/img/dd_logo_n_70x75.png" alt="Datadog" height="60">
-  &nbsp;&nbsp;&nbsp;
-  <span style="font-size: 2em;">+</span>
-  &nbsp;&nbsp;&nbsp;
-  <img src="https://modelcontextprotocol.io/logo.svg" alt="MCP" height="60">
-</p>
 
 ---
 
