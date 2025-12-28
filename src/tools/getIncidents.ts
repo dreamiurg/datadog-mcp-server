@@ -1,80 +1,72 @@
-import { client, v2 } from "@datadog/datadog-api-client";
+import { v2 } from "@datadog/datadog-api-client";
+import { createDatadogConfiguration, handleApiError } from "../lib/index.js";
 
-type GetIncidentsParams = {
+interface GetIncidentsParams {
   includeArchived?: boolean;
   pageSize?: number;
   pageOffset?: number;
   query?: string;
   limit?: number;
-};
+}
 
-let configuration: client.Configuration;
+let apiInstance: v2.IncidentsApi | null = null;
 
 export const getIncidents = {
   initialize: () => {
-    const configOpts = {
-      authMethods: {
-        apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY,
-      },
-    };
-
-    configuration = client.createConfiguration(configOpts);
-
-    if (process.env.DD_SITE) {
-      configuration.setServerVariables({
-        site: process.env.DD_SITE,
-      });
-    }
-
-    // Enable the unstable operation
-    configuration.unstableOperations["v2.listIncidents"] = true;
+    const configuration = createDatadogConfiguration({
+      service: "default",
+      unstableOperations: ["v2.listIncidents", "v2.searchIncidents"],
+    });
+    apiInstance = new v2.IncidentsApi(configuration);
   },
 
   execute: async (params: GetIncidentsParams) => {
+    if (!apiInstance) {
+      throw new Error("getIncidents not initialized. Call initialize() first.");
+    }
+
     try {
       const { includeArchived, pageSize, pageOffset, query, limit } = params;
 
-      const apiInstance = new v2.IncidentsApi(configuration);
+      // If a query is provided, use searchIncidents instead of listIncidents
+      if (query) {
+        const searchParams: v2.IncidentsApiSearchIncidentsRequest = {
+          query,
+          pageSize,
+          pageOffset,
+        };
 
-      const apiParams: any = {};
+        const response = await apiInstance.searchIncidents(searchParams);
 
-      if (includeArchived !== undefined) {
-        apiParams.include_archived = includeArchived;
+        const incidents = response.data?.attributes?.incidents;
+        if (limit && incidents && incidents.length > limit && response.data?.attributes) {
+          response.data.attributes.incidents = incidents.slice(0, limit);
+        }
+
+        return response;
       }
 
-      if (pageSize !== undefined) {
-        apiParams.page_size = pageSize;
-      }
+      // Use listIncidents for non-query requests
+      const apiParams: v2.IncidentsApiListIncidentsRequest = {
+        pageSize,
+        pageOffset,
+      };
 
-      if (pageOffset !== undefined) {
-        apiParams.page_offset = pageOffset;
-      }
-
-      if (query !== undefined) {
-        apiParams.query = query;
-      }
+      // Note: includeArchived doesn't map directly to the API's include parameter
+      // The include parameter takes IncidentRelatedObject values like "users", "attachments"
+      // The original code was incorrect here - we'll skip includeArchived for now
+      // as there's no direct API support for it in listIncidents
+      void includeArchived; // Acknowledge but don't use (API doesn't support this filter)
 
       const response = await apiInstance.listIncidents(apiParams);
 
-      // Apply client-side limit if specified
       if (limit && response.data && response.data.length > limit) {
         response.data = response.data.slice(0, limit);
       }
 
       return response;
-    } catch (error: any) {
-      if (error.status === 403) {
-        console.error(
-          "Authorization failed (403 Forbidden): Check that your API key and Application key are valid and have sufficient permissions to access incidents.",
-        );
-        throw new Error(
-          "Datadog API authorization failed. Please verify your API and Application keys have the correct permissions.",
-        );
-      } else {
-        console.error("Error fetching incidents:", error);
-        throw error;
-      }
+    } catch (error: unknown) {
+      handleApiError(error, "fetching incidents");
     }
   },
 };

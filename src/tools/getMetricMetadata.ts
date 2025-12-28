@@ -1,44 +1,30 @@
-import { client, v1 } from "@datadog/datadog-api-client";
+import { v1 } from "@datadog/datadog-api-client";
+import { createDatadogConfiguration, handleApiError } from "../lib/index.js";
 
-type GetMetricMetadataParams = {
+interface GetMetricMetadataParams {
   metricName: string;
-};
+}
 
-let configuration: client.Configuration;
+let apiInstance: v1.MetricsApi | null = null;
 
 export const getMetricMetadata = {
   initialize: () => {
-    const configOpts = {
-      authMethods: {
-        apiKeyAuth: process.env.DD_API_KEY,
-        appKeyAuth: process.env.DD_APP_KEY,
-      },
-    };
-
-    configuration = client.createConfiguration(configOpts);
-
-    if (process.env.DD_METRICS_SITE) {
-      configuration.setServerVariables({
-        site: process.env.DD_METRICS_SITE,
-      });
-    }
+    const configuration = createDatadogConfiguration({ service: "metrics" });
+    apiInstance = new v1.MetricsApi(configuration);
   },
 
   execute: async (params: GetMetricMetadataParams) => {
+    if (!apiInstance) {
+      throw new Error("getMetricMetadata not initialized. Call initialize() first.");
+    }
+
     try {
       const { metricName } = params;
 
-      const apiInstance = new v1.MetricsApi(configuration);
-
-      const apiParams: v1.MetricsApiGetMetricMetadataRequest = {
-        metricName: metricName,
-      };
-
-      const response = await apiInstance.getMetricMetadata(apiParams);
+      const response = await apiInstance.getMetricMetadata({ metricName });
       return response;
-    } catch (error) {
-      console.error(`Error fetching metadata for metric ${params.metricName}:`, error);
-      throw error;
+    } catch (error: unknown) {
+      handleApiError(error, `fetching metadata for metric ${params.metricName}`);
     }
   },
 };
