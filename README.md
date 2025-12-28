@@ -1,18 +1,23 @@
 # Datadog MCP Server
 
-A Model Context Protocol (MCP) server for interacting with the Datadog API.
+A [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that provides read-only access to Datadog resources. Query monitors, dashboards, logs, metrics, events, and incidents directly from Claude or other MCP-compatible clients.
 
-[![MCP Server](https://glama.ai/mcp/servers/@GeLi2001/datadog-mcp-server/badge)](https://glama.ai/mcp/servers/@GeLi2001/datadog-mcp-server)
-
----
-
-## Quick Start
+## Installation
 
 ```bash
 npm install -g datadog-mcp-server
 ```
 
-Add to your `claude_desktop_config.json`:
+**Requirements:** Node.js 18+
+
+## Configuration
+
+### Claude Desktop
+
+Add to your Claude Desktop configuration file:
+
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows:** `%APPDATA%/Claude/claude_desktop_config.json`
 
 ```json
 {
@@ -30,20 +35,38 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-Config file locations:
-- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
+### Datadog Credentials
 
----
+You need two credentials from your Datadog account:
 
-## Prerequisites
+- **API Key**: Organization Settings > API Keys
+- **Application Key**: Organization Settings > Application Keys
 
-- **Node.js** 18 or higher
-- **Datadog account** with API credentials:
-  - API Key (Organization Settings > API Keys)
-  - Application Key (Organization Settings > Application Keys)
+### Regional Endpoints
 
----
+Set `--site` based on your Datadog region:
+
+| Region | Site Value |
+|--------|------------|
+| US (default) | `datadoghq.com` |
+| EU | `datadoghq.eu` |
+| US3 (GovCloud) | `ddog-gov.com` |
+| US5 | `us5.datadoghq.com` |
+| AP1 | `ap1.datadoghq.com` |
+
+### Environment Variables
+
+Alternatively, create a `.env` file in the working directory:
+
+```bash
+DD_API_KEY=your_api_key
+DD_APP_KEY=your_app_key
+DD_SITE=datadoghq.com
+```
+
+Optional overrides for service-specific endpoints:
+- `DD_LOGS_SITE` - Logs API endpoint (defaults to `DD_SITE`)
+- `DD_METRICS_SITE` - Metrics API endpoint (defaults to `DD_SITE`)
 
 ## Available Tools
 
@@ -60,183 +83,27 @@ Config file locations:
 | `search-logs` | Search logs with query filtering |
 | `aggregate-logs` | Perform analytics on log data |
 
----
-
-## Configuration
-
-### Environment Variables
-
-Create a `.env` file:
-
-```bash
-DD_API_KEY=your_api_key
-DD_APP_KEY=your_app_key
-DD_SITE=datadoghq.com        # Required
-DD_LOGS_SITE=datadoghq.com   # Optional, defaults to DD_SITE
-DD_METRICS_SITE=datadoghq.com # Optional, defaults to DD_SITE
-```
-
-### Command-Line Arguments
-
-```bash
-datadog-mcp-server \
-  --apiKey=your_api_key \
-  --appKey=your_app_key \
-  --site=datadoghq.com
-```
-
-Site arguments don't need `https://` — it's added automatically.
-
-### Regional Endpoints
-
-| Region | Endpoint |
-|--------|----------|
-| US (default) | `datadoghq.com` |
-| EU | `datadoghq.eu` |
-| US3 (GovCloud) | `ddog-gov.com` |
-| US5 | `us5.datadoghq.com` |
-| AP1 | `ap1.datadoghq.com` |
-
----
-
 ## Application Key Scopes
 
-For better security, scope your Application Key to only the permissions this server needs.
+For least-privilege access, create an Application Key with only the scopes you need:
 
-### Required Scopes by Tool
+| Tools | Required Scope |
+|-------|----------------|
+| `get-monitors`, `get-monitor` | `monitors_read` |
+| `get-dashboards`, `get-dashboard` | `dashboards_read` |
+| `get-metrics`, `get-metric-metadata` | `metrics_read` |
+| `get-events` | `events_read` |
+| `search-logs`, `aggregate-logs` | `logs_read_data` |
+| `get-incidents` | `incident_read` |
 
-| Tools | Scope | Description |
-|-------|-------|-------------|
-| `get-monitors`, `get-monitor` | `monitors_read` | Monitor configurations and states |
-| `get-dashboards`, `get-dashboard` | `dashboards_read` | Dashboard definitions |
-| `get-metrics`, `get-metric-metadata` | `metrics_read` | Metrics list and metadata |
-| `get-events` | `events_read` | Event stream access |
-| `search-logs`, `aggregate-logs` | `logs_read_data` | Log search and aggregation |
-| `get-incidents` | `incident_read` | Incident management data |
-
-### Common Scope Combinations
-
-| Use Case | Scopes |
-|----------|--------|
-| Full access | `monitors_read`, `dashboards_read`, `metrics_read`, `events_read`, `logs_read_data`, `incident_read` |
-| Logs only | `logs_read_data` |
-| Monitoring only | `monitors_read`, `dashboards_read`, `metrics_read` |
-
-To create a scoped key: **Organization Settings** > **Application Keys** > **New Key** > select scopes.
-
-> **Note**: Unscoped keys inherit all permissions from the creating user. Always specify explicit scopes for production.
-
----
-
-## Examples
-
-<details>
-<summary><strong>Get Monitors</strong></summary>
-
-```json
-{
-  "method": "tools/call",
-  "params": {
-    "name": "get-monitors",
-    "arguments": {
-      "groupStates": ["alert", "warn"],
-      "limit": 5
-    }
-  }
-}
-```
-</details>
-
-<details>
-<summary><strong>Get Dashboard</strong></summary>
-
-```json
-{
-  "method": "tools/call",
-  "params": {
-    "name": "get-dashboard",
-    "arguments": {
-      "dashboardId": "abc-def-123"
-    }
-  }
-}
-```
-</details>
-
-<details>
-<summary><strong>Search Logs</strong></summary>
-
-```json
-{
-  "method": "tools/call",
-  "params": {
-    "name": "search-logs",
-    "arguments": {
-      "filter": {
-        "query": "service:web-app status:error",
-        "from": "now-15m",
-        "to": "now"
-      },
-      "sort": "-timestamp",
-      "limit": 20
-    }
-  }
-}
-```
-</details>
-
-<details>
-<summary><strong>Aggregate Logs</strong></summary>
-
-```json
-{
-  "method": "tools/call",
-  "params": {
-    "name": "aggregate-logs",
-    "arguments": {
-      "filter": {
-        "query": "service:web-app",
-        "from": "now-1h",
-        "to": "now"
-      },
-      "compute": [{ "aggregation": "count" }],
-      "groupBy": [{
-        "facet": "status",
-        "limit": 10,
-        "sort": { "aggregation": "count", "order": "desc" }
-      }]
-    }
-  }
-}
-```
-</details>
-
-<details>
-<summary><strong>Get Incidents</strong></summary>
-
-```json
-{
-  "method": "tools/call",
-  "params": {
-    "name": "get-incidents",
-    "arguments": {
-      "includeArchived": false,
-      "query": "state:active",
-      "pageSize": 10
-    }
-  }
-}
-```
-</details>
-
----
+Create a scoped key: **Organization Settings** > **Application Keys** > **New Key** > select scopes.
 
 ## Troubleshooting
 
 ### 403 Forbidden
 
 1. Verify API key and Application key are correct
-2. Check that keys have required [scopes](#application-key-scopes)
+2. Check that your Application Key has the required [scopes](#application-key-scopes)
 3. Confirm you're using the correct [regional endpoint](#regional-endpoints)
 
 ### Viewing MCP Logs
@@ -249,34 +116,34 @@ tail -f ~/Library/Logs/Claude/mcp*.log
 Get-Content "$env:APPDATA\Claude\Logs\mcp*.log" -Tail 20 -Wait
 ```
 
-### Common Issues
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| 403 Forbidden | Invalid or insufficient permissions | Check API/App keys and scopes |
-| Invalid key format | Truncated or malformed key | Use full key strings |
-| Site configuration error | Wrong regional endpoint | Match endpoint to your Datadog region |
-
----
-
-## Installation from Source
+## Development
 
 ```bash
-git clone https://github.com/GeLi2001/datadog-mcp-server.git
+git clone https://github.com/dreamiurg/datadog-mcp-server.git
 cd datadog-mcp-server
 npm install
 npm run build
 ```
 
-### Using with MCP Inspector
+### Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run build` | Compile TypeScript to JavaScript |
+| `npm run dev` | Build and run the server |
+| `npm run lint` | Run Biome linter |
+| `npm run lint:fix` | Fix linting issues |
+| `npm run format` | Format code with Biome |
+| `npm run typecheck` | Run TypeScript type checking |
+| `npm run check` | Run typecheck + lint |
+
+### Testing with MCP Inspector
 
 ```bash
-npx @modelcontextprotocol/inspector datadog-mcp-server \
+npx @modelcontextprotocol/inspector node dist/index.js \
   --apiKey=your_api_key \
   --appKey=your_app_key
 ```
-
----
 
 ## License
 
