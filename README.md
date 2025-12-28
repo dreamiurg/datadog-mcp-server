@@ -3,63 +3,126 @@
 [![CI](https://github.com/dreamiurg/datadog-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/dreamiurg/datadog-mcp-server/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/dreamiurg/datadog-mcp-server/graph/badge.svg)](https://codecov.io/gh/dreamiurg/datadog-mcp-server)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/dreamiurg/datadog-mcp-server/badge)](https://scorecard.dev/viewer/?uri=github.com/dreamiurg/datadog-mcp-server)
-[![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/dreamiurg/datadog-mcp-server?utm_source=oss&utm_medium=github&utm_campaign=dreamiurg%2Fdatadog-mcp-server&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)](https://coderabbit.ai)
+[![CodeRabbit Reviews](https://img.shields.io/coderabbit/prs/github/dreamiurg/datadog-mcp-server?labelColor=171717&color=FF570A&label=CodeRabbit)](https://coderabbit.ai)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js 20+](https://img.shields.io/badge/node-20%2B-brightgreen)](https://nodejs.org)
 
-A [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that provides read-only access to Datadog resources. Query monitors, dashboards, logs, metrics, events, and incidents directly from Claude or other MCP-compatible clients.
+> **Query Datadog from AI assistants.** Access monitors, dashboards, logs, metrics, and incidents directly from Claude, Cursor, VS Code, and other MCP-compatible clients.
 
-## Installation
+<p align="center">
+  <img src="https://imgix.datadoghq.com/img/dd_logo_n_70x75.png" alt="Datadog" height="60">
+  &nbsp;&nbsp;&nbsp;
+  <span style="font-size: 2em;">+</span>
+  &nbsp;&nbsp;&nbsp;
+  <img src="https://modelcontextprotocol.io/logo.svg" alt="MCP" height="60">
+</p>
+
+---
+
+## Why Use This?
+
+| Without MCP | With Datadog MCP Server |
+|-------------|------------------------|
+| Switch to Datadog UI, search, copy-paste | Ask: *"Show me failing monitors"* |
+| Navigate dashboards manually | Ask: *"What's on our API latency dashboard?"* |
+| Write log queries, export results | Ask: *"Find errors in auth service last hour"* |
+| Check multiple tabs during incidents | Ask: *"Summarize active incidents"* |
+
+**Perfect for:** Debugging sessions, incident response, on-call rotations, and daily observability tasks.
+
+---
+
+## Quick Start
 
 ```bash
 npx github:dreamiurg/datadog-mcp-server --help
 ```
 
-**Requirements:** Node.js 20+
+**That's it.** No installation required. Works with Node.js 20+.
 
-## Configuration
+---
 
-Most MCP-compatible tools use a similar JSON configuration. The core server configuration is:
+## Setup
 
-```json
-{
-  "mcpServers": {
-    "datadog": {
-      "command": "npx",
-      "args": [
-        "github:dreamiurg/datadog-mcp-server",
-        "--apiKey", "<YOUR_API_KEY>",
-        "--appKey", "<YOUR_APP_KEY>",
-        "--site", "datadoghq.com"
-      ]
-    }
-  }
-}
-```
+### 1. Get Datadog Credentials
 
-### Claude Code (CLI)
+You need two keys from your [Datadog Organization Settings](https://app.datadoghq.com/organization-settings/):
 
-Add via CLI or edit the config file directly:
+| Credential | Where to Find |
+|------------|---------------|
+| **API Key** | Organization Settings → API Keys → New Key |
+| **Application Key** | Organization Settings → Application Keys → New Key |
+
+> **Tip:** For least-privilege access, [scope your Application Key](#application-key-scopes) to only the permissions you need.
+
+### 2. Configure Your AI Tool
+
+<details>
+<summary><strong>Claude Code (CLI)</strong></summary>
 
 ```bash
 claude mcp add datadog -- npx github:dreamiurg/datadog-mcp-server \
-  --apiKey <YOUR_API_KEY> \
-  --appKey <YOUR_APP_KEY> \
+  --apiKey YOUR_API_KEY \
+  --appKey YOUR_APP_KEY \
   --site datadoghq.com
 ```
 
-Or add to `~/.claude.json` (user scope) or `.mcp.json` (project scope):
+Or add to `~/.claude.json`:
 
 ```json
 {
   "mcpServers": {
     "datadog": {
       "command": "npx",
-      "args": ["github:dreamiurg/datadog-mcp-server", "--apiKey", "<YOUR_API_KEY>", "--appKey", "<YOUR_APP_KEY>", "--site", "datadoghq.com"]
+      "args": ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--appKey", "YOUR_APP_KEY"]
     }
   }
 }
 ```
+</details>
 
-### Gemini CLI
+<details>
+<summary><strong>Claude Desktop</strong></summary>
+
+Add to your config file:
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%/Claude/claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "datadog": {
+      "command": "npx",
+      "args": ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--appKey", "YOUR_APP_KEY"]
+    }
+  }
+}
+```
+</details>
+
+<details>
+<summary><strong>Cursor / VS Code / Windsurf</strong></summary>
+
+| Tool | Config File |
+|------|-------------|
+| Cursor | `~/.cursor/mcp.json` or `.cursor/mcp.json` (project) |
+| Windsurf | `~/.codeium/windsurf/mcp_config.json` |
+| VS Code | User Settings JSON (`Ctrl+Shift+P` → "Open User Settings (JSON)") |
+
+```json
+{
+  "mcpServers": {
+    "datadog": {
+      "command": "npx",
+      "args": ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--appKey", "YOUR_APP_KEY"]
+    }
+  }
+}
+```
+</details>
+
+<details>
+<summary><strong>Gemini CLI</strong></summary>
 
 Add to `~/.gemini/settings.json`:
 
@@ -68,51 +131,49 @@ Add to `~/.gemini/settings.json`:
   "mcpServers": {
     "datadog": {
       "command": "npx",
-      "args": ["github:dreamiurg/datadog-mcp-server", "--apiKey", "<YOUR_API_KEY>", "--appKey", "<YOUR_APP_KEY>", "--site", "datadoghq.com"]
+      "args": ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--appKey", "YOUR_APP_KEY"]
     }
   }
 }
 ```
+</details>
 
-### Codex CLI (OpenAI)
+<details>
+<summary><strong>Codex CLI (OpenAI)</strong></summary>
 
 Add to `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.datadog]
 command = "npx"
-args = ["github:dreamiurg/datadog-mcp-server", "--apiKey", "<YOUR_API_KEY>", "--appKey", "<YOUR_APP_KEY>", "--site", "datadoghq.com"]
+args = ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--appKey", "YOUR_APP_KEY"]
 ```
+</details>
 
-### Cursor / Windsurf / VS Code
+---
 
-| Tool | Config File |
-|------|-------------|
-| Cursor | `~/.cursor/mcp.json` or `.cursor/mcp.json` (project) |
-| Windsurf | `~/.codeium/windsurf/mcp_config.json` |
-| VS Code | User Settings JSON (Ctrl+Shift+P > "Preferences: Open User Settings (JSON)") |
+## Available Tools
 
-Use the standard JSON format shown above.
+| Tool | Description | Example Prompt |
+|------|-------------|----------------|
+| `get-monitors` | List monitors (filter by state, tags) | *"Show all alerting monitors"* |
+| `get-monitor` | Get monitor details by ID | *"Get details for monitor 12345"* |
+| `get-dashboards` | List all dashboards | *"What dashboards do we have?"* |
+| `get-dashboard` | Get dashboard by ID | *"Show the API metrics dashboard"* |
+| `get-metrics` | List available metrics | *"What metrics are available?"* |
+| `get-metric-metadata` | Get metric metadata | *"Describe the cpu.user metric"* |
+| `get-events` | Fetch events in time range | *"What events happened today?"* |
+| `get-incidents` | List incidents | *"Show active incidents"* |
+| `search-logs` | Search logs with queries | *"Find errors in prod last hour"* |
+| `aggregate-logs` | Analytics on log data | *"Count errors by service"* |
 
-### Claude Desktop
+---
 
-Add to your Claude Desktop configuration file:
-
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows:** `%APPDATA%/Claude/claude_desktop_config.json`
-
-Use the standard JSON format shown above.
-
-### Datadog Credentials
-
-You need two credentials from your Datadog account:
-
-- **API Key**: Organization Settings > API Keys
-- **Application Key**: Organization Settings > Application Keys
+## Configuration Reference
 
 ### Regional Endpoints
 
-Set `--site` based on your Datadog region:
+Set `--site` for your Datadog region:
 
 | Region | Site Value |
 |--------|------------|
@@ -124,68 +185,33 @@ Set `--site` based on your Datadog region:
 
 ### Environment Variables
 
-Alternatively, create a `.env` file in the working directory:
+Alternative to command-line arguments:
 
 ```bash
 DD_API_KEY=your_api_key
 DD_APP_KEY=your_app_key
-DD_SITE=datadoghq.com
+DD_SITE=datadoghq.com          # Optional, defaults to datadoghq.com
+DD_LOGS_SITE=logs.datadoghq.com # Optional, override for logs API
+DD_METRICS_SITE=api.datadoghq.com # Optional, override for metrics API
 ```
 
-Optional overrides for service-specific endpoints:
-- `DD_LOGS_SITE` - Logs API endpoint (defaults to `DD_SITE`)
-- `DD_METRICS_SITE` - Metrics API endpoint (defaults to `DD_SITE`)
-
 ### Logging
-
-The server uses structured logging via [pino](https://github.com/pinojs/pino). Logs are written to stderr to avoid interfering with the MCP protocol on stdout.
 
 | Variable | Values | Default | Description |
 |----------|--------|---------|-------------|
 | `LOG_LEVEL` | `debug`, `info`, `warn`, `error` | `info` | Minimum log level |
-| `LOG_FORMAT` | `json`, `pretty` | `json` | Output format |
+| `LOG_FORMAT` | `json`, `pretty` | `json` | Output format (`pretty` for local dev) |
 
-**Production (JSON):**
 ```bash
-# Structured JSON logs for log aggregators
-npx github:dreamiurg/datadog-mcp-server --apiKey ... --appKey ...
-```
-
-**Development (Pretty):**
-```bash
-# Human-readable, colorized output
+# Pretty logs for development
 LOG_FORMAT=pretty npx github:dreamiurg/datadog-mcp-server --apiKey ... --appKey ...
-
-# Or use NODE_ENV
-NODE_ENV=development npx github:dreamiurg/datadog-mcp-server --apiKey ... --appKey ...
 ```
 
-**Example pretty output:**
-```
-12:34:56 INFO  Starting Datadog MCP Server
-12:34:56 INFO  Tool initialized (tool: get-monitors)
-12:34:57 DEBUG executing get-monitors (tool: get-monitors)
-12:34:58 INFO  get-monitors completed (tool: get-monitors, resultCount: 42, durationMs: 1200)
-```
-
-## Available Tools
-
-| Tool | Description |
-|------|-------------|
-| `get-monitors` | List monitors with optional filtering by state, tags |
-| `get-monitor` | Get a specific monitor by ID |
-| `get-dashboards` | List all dashboards |
-| `get-dashboard` | Get a specific dashboard by ID |
-| `get-metrics` | List available metrics |
-| `get-metric-metadata` | Get metadata for a specific metric |
-| `get-events` | Fetch events within a time range |
-| `get-incidents` | List incidents with optional filtering |
-| `search-logs` | Search logs with query filtering |
-| `aggregate-logs` | Perform analytics on log data |
+---
 
 ## Application Key Scopes
 
-For least-privilege access, create an Application Key with only the scopes you need:
+For least-privilege security, create an Application Key with only required scopes:
 
 | Tools | Required Scope |
 |-------|----------------|
@@ -196,28 +222,44 @@ For least-privilege access, create an Application Key with only the scopes you n
 | `search-logs`, `aggregate-logs` | `logs_read_data` |
 | `get-incidents` | `incident_read` |
 
-Create a scoped key: **Organization Settings** > **Application Keys** > **New Key** > select scopes.
+**Create a scoped key:** Organization Settings → Application Keys → New Key → Select scopes
+
+---
 
 ## Troubleshooting
 
-### 403 Forbidden
+<details>
+<summary><strong>403 Forbidden</strong></summary>
 
 1. Verify API key and Application key are correct
-2. Check that your Application Key has the required [scopes](#application-key-scopes)
+2. Check your Application Key has required [scopes](#application-key-scopes)
 3. Confirm you're using the correct [regional endpoint](#regional-endpoints)
+</details>
 
-### Viewing MCP Logs
+<details>
+<summary><strong>Connection Issues</strong></summary>
 
 ```bash
-# Claude Desktop (macOS)
+# Check MCP server status
+claude mcp list
+
+# View logs (Claude Desktop - macOS)
 tail -f ~/Library/Logs/Claude/mcp*.log
 
-# Claude Desktop (Windows PowerShell)
+# View logs (Claude Desktop - Windows)
 Get-Content "$env:APPDATA\Claude\Logs\mcp*.log" -Tail 20 -Wait
-
-# Claude Code CLI
-claude mcp list   # check server status
 ```
+</details>
+
+<details>
+<summary><strong>Debug Mode</strong></summary>
+
+```bash
+LOG_LEVEL=debug LOG_FORMAT=pretty npx github:dreamiurg/datadog-mcp-server --apiKey ... --appKey ...
+```
+</details>
+
+---
 
 ## Development
 
@@ -226,30 +268,33 @@ git clone https://github.com/dreamiurg/datadog-mcp-server.git
 cd datadog-mcp-server
 npm install
 npm run build
+npm test
 ```
-
-### Available Scripts
 
 | Script | Description |
 |--------|-------------|
-| `npm run build` | Compile TypeScript to JavaScript |
-| `npm run dev` | Build and run the server |
-| `npm run lint` | Run Biome linter |
-| `npm run lint:fix` | Fix linting issues |
-| `npm run format` | Format code with Biome |
-| `npm run typecheck` | Run TypeScript type checking |
-| `npm run check` | Run typecheck + lint |
+| `npm run build` | Compile TypeScript |
 | `npm test` | Run tests |
-| `npm run test:coverage` | Run tests with coverage report |
+| `npm run test:coverage` | Run tests with coverage |
+| `npm run lint` | Run linter |
+| `npm run typecheck` | Type check |
 
-### Testing with MCP Inspector
+### Test with MCP Inspector
 
 ```bash
 npx @modelcontextprotocol/inspector node dist/index.js \
-  --apiKey=your_api_key \
-  --appKey=your_app_key
+  --apiKey=YOUR_API_KEY \
+  --appKey=YOUR_APP_KEY
 ```
+
+---
+
+## Contributing
+
+Contributions are welcome! Please read our [Security Policy](SECURITY.md) for reporting vulnerabilities.
+
+---
 
 ## License
 
-MIT
+[MIT](LICENSE) - Use freely in personal and commercial projects.
