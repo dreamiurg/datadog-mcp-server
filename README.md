@@ -134,6 +134,38 @@ Optional overrides for service-specific endpoints:
 - `DD_LOGS_SITE` - Logs API endpoint (defaults to `DD_SITE`)
 - `DD_METRICS_SITE` - Metrics API endpoint (defaults to `DD_SITE`)
 
+### Logging
+
+The server uses structured logging via [pino](https://github.com/pinojs/pino). Logs are written to stderr to avoid interfering with the MCP protocol on stdout.
+
+| Variable | Values | Default | Description |
+|----------|--------|---------|-------------|
+| `LOG_LEVEL` | `debug`, `info`, `warn`, `error` | `info` | Minimum log level |
+| `LOG_FORMAT` | `json`, `pretty` | `json` | Output format |
+
+**Production (JSON):**
+```bash
+# Structured JSON logs for log aggregators
+npx github:dreamiurg/datadog-mcp-server --apiKey ... --appKey ...
+```
+
+**Development (Pretty):**
+```bash
+# Human-readable, colorized output
+LOG_FORMAT=pretty npx github:dreamiurg/datadog-mcp-server --apiKey ... --appKey ...
+
+# Or use NODE_ENV
+NODE_ENV=development npx github:dreamiurg/datadog-mcp-server --apiKey ... --appKey ...
+```
+
+**Example pretty output:**
+```
+12:34:56 INFO  Starting Datadog MCP Server
+12:34:56 INFO  Tool initialized (tool: get-monitors)
+12:34:57 DEBUG executing get-monitors (tool: get-monitors)
+12:34:58 INFO  get-monitors completed (tool: get-monitors, resultCount: 42, durationMs: 1200)
+```
+
 ## Available Tools
 
 | Tool | Description |
