@@ -11,7 +11,7 @@ A [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server that p
 npx github:dreamiurg/datadog-mcp-server --help
 ```
 
-**Requirements:** Node.js 18+
+**Requirements:** Node.js 20+
 
 ## Configuration
 
