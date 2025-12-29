@@ -73,14 +73,16 @@ if (!DD_APP_KEY) {
     index_js_1.logger.error("Command line: --appKey=your_app_key");
     process.exit(1);
 }
-// Log server startup with configuration
+// Log server startup with configuration (credentials are masked for security)
+const maskedApiKey = maskCredential(DD_API_KEY);
+const maskedAppKey = maskCredential(DD_APP_KEY);
 index_js_1.logger.info({
     version: VERSION,
     site: DD_SITE,
     logsSite: DD_LOGS_SITE,
     metricsSite: DD_METRICS_SITE,
-    apiKey: maskCredential(DD_API_KEY),
-    appKey: maskCredential(DD_APP_KEY),
+    apiKeyPreview: maskedApiKey,
+    appKeyPreview: maskedAppKey,
 }, "Starting Datadog MCP Server");
 // Initialize Datadog client tools
 // We initialize each tool which will use the appropriate site configuration

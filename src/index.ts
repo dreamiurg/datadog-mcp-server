@@ -83,15 +83,17 @@ if (!DD_APP_KEY) {
   process.exit(1);
 }
 
-// Log server startup with configuration
+// Log server startup with configuration (credentials are masked for security)
+const maskedApiKey = maskCredential(DD_API_KEY);
+const maskedAppKey = maskCredential(DD_APP_KEY);
 logger.info(
   {
     version: VERSION,
     site: DD_SITE,
     logsSite: DD_LOGS_SITE,
     metricsSite: DD_METRICS_SITE,
-    apiKey: maskCredential(DD_API_KEY),
-    appKey: maskCredential(DD_APP_KEY),
+    apiKeyPreview: maskedApiKey,
+    appKeyPreview: maskedAppKey,
   },
   "Starting Datadog MCP Server",
 );
