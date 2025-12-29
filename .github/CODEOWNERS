@@ -1,0 +1,9 @@
+# Code Owners for datadog-mcp-server
+# These owners will be requested for review when someone opens a pull request
+
+# Default owner for everything in the repo
+* @dreamiurg
+
+# Security-sensitive files require owner review
+SECURITY.md @dreamiurg
+.github/workflows/ @dreamiurg
