@@ -42,7 +42,6 @@ export const aggregateSpans = {
     // Validate that configuration can be created (this checks env vars)
     createDatadogConfiguration({
       service: "apm",
-      unstableOperations: ["v2.aggregateSpans"],
     });
     initialized = true;
   },
