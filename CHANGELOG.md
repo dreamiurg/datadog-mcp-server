@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.2.1](https://github.com/dreamiurg/datadog-mcp-server/compare/v1.2.0...v1.2.1) (2026-02-06)
+
+
+### Bug Fixes
+
+* anchor release-please to v1.2.0 baseline ([#4](https://github.com/dreamiurg/datadog-mcp-server/issues/4)) ([316c0e1](https://github.com/dreamiurg/datadog-mcp-server/commit/316c0e10c5fbf5295f3d9af4477f17f9778f6ad1))
+
+
+### Miscellaneous Chores
+
+* add publish workflow and codeowners ([#38](https://github.com/dreamiurg/datadog-mcp-server/issues/38)) ([1f76dad](https://github.com/dreamiurg/datadog-mcp-server/commit/1f76dad9d1f364294e2f101f8c0304f28bc8b910))
+* add release-please manifest and unify agent instructions ([#2](https://github.com/dreamiurg/datadog-mcp-server/issues/2)) ([e529b74](https://github.com/dreamiurg/datadog-mcp-server/commit/e529b747aa2d94563fe5d91fe0495060ec5971e5))
+* bootstrap production quality gates ([#44](https://github.com/dreamiurg/datadog-mcp-server/issues/44)) ([802001c](https://github.com/dreamiurg/datadog-mcp-server/commit/802001cb86188c5f2082d462604d9894342f7d0e))
+* **deps:** bump @modelcontextprotocol/sdk from 1.25.1 to 1.26.0 ([#35](https://github.com/dreamiurg/datadog-mcp-server/issues/35)) ([598d7dd](https://github.com/dreamiurg/datadog-mcp-server/commit/598d7dd09346b8260763480146dbf76c548b030f))
+* **deps:** bump hono from 4.11.3 to 4.11.7 ([#34](https://github.com/dreamiurg/datadog-mcp-server/issues/34)) ([1b75b2f](https://github.com/dreamiurg/datadog-mcp-server/commit/1b75b2f57888f62f6ba203a2e6b06cebe3d09a38))
+* **deps:** bump the minor-and-patch group across 1 directory with 8 updates ([#30](https://github.com/dreamiurg/datadog-mcp-server/issues/30)) ([d8ccf77](https://github.com/dreamiurg/datadog-mcp-server/commit/d8ccf773ad2f42f3a75572e5ee87295ec0bf4fc4))
+
+
+### Continuous Integration
+
+* **deps:** bump github/codeql-action from 4.32.1 to 4.32.2 in the actions group ([#42](https://github.com/dreamiurg/datadog-mcp-server/issues/42)) ([3e1bb79](https://github.com/dreamiurg/datadog-mcp-server/commit/3e1bb79429757e1540044bea1f989775422aef86))
+* **deps:** bump the actions group with 2 updates ([#40](https://github.com/dreamiurg/datadog-mcp-server/issues/40)) ([66b10be](https://github.com/dreamiurg/datadog-mcp-server/commit/66b10be6214234799dca4bbfa51c0903d4b056cf))
+
 ## [1.2.0](https://github.com/dreamiurg/datadog-mcp-server/compare/v1.1.1...v1.2.0) (2026-02-05)
 
 
