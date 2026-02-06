@@ -4,21 +4,48 @@
 [![codecov](https://codecov.io/gh/dreamiurg/datadog-mcp-server/graph/badge.svg)](https://codecov.io/gh/dreamiurg/datadog-mcp-server)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/dreamiurg/datadog-mcp-server/badge)](https://scorecard.dev/viewer/?uri=github.com/dreamiurg/datadog-mcp-server)
 
-> **Query Datadog from AI assistants.** Access monitors, dashboards, logs, metrics, incidents, and APM traces directly from Claude, Cursor, VS Code, and other MCP-compatible clients.
-
+> **The Datadog MCP server your AI deserves.** 48 read-only tools. Every observability pillar. Zero writes. Zero regrets.
 
 ---
 
-## Why Use This?
+## Why This One?
 
-| Without MCP | With Datadog MCP Server |
-|-------------|------------------------|
-| Switch to Datadog UI, search, copy-paste | Ask: *"Show me failing monitors"* |
-| Navigate dashboards manually | Ask: *"What's on our API latency dashboard?"* |
-| Write log queries, export results | Ask: *"Find errors in auth service last hour"* |
-| Check multiple tabs during incidents | Ask: *"Summarize active incidents"* |
+Look, we get it. You searched "datadog mcp server" and got seven results. You're wondering which one to pick. Let us save you some time.
 
-**Perfect for:** Debugging sessions, incident response, on-call rotations, and daily observability tasks.
+| Feature | **Us (48 tools)** | Next Best (20 tools) | The Others (3-13 tools) |
+|---------|:-----------------:|:-------------------:|:----------------------:|
+| Logs (search + aggregate + pipelines + indexes) | **4 tools** | 1 tool | 0-1 tool |
+| APM (traces, spans, services, dependencies) | **6 tools** | 1 tool | 0 tools |
+| RUM (events, apps, aggregation) | **3 tools** | 3 tools | 0 tools |
+| Monitors (list, get, search) | **3 tools** | 1 tool | 0-1 tool |
+| Dashboards (get, list, collections) | **3 tools** | 1 tool | 0-1 tool |
+| SLOs (list, get, history) | **3 tools** | 0 tools | 0-1 tool |
+| Synthetics (tests + results) | **2 tools** | 0 tools | 0-1 tool |
+| Security (findings, posture, signals) | **4 tools** | 0 tools | 0-1 tool |
+| Infrastructure (hosts, tags, containers, processes) | **4 tools** | 2 tools | 0-1 tool |
+| Service Catalog | **2 tools** | 0 tools | 0-1 tool |
+| CI Visibility | **2 tools** | 0 tools | 0-1 tool |
+| Organization (teams, users) | **2 tools** | 0 tools | 0-1 tool |
+| Metrics (query, metadata, volumes, list) | **4 tools** | 1 tool | 0-1 tool |
+| Error Tracking | **1 tool** | 0 tools | 0 tools |
+| Database Monitoring | **1 tool** | 0 tools | 0 tools |
+| Audit Trail | **1 tool** | 0 tools | 0 tools |
+| Usage & Billing | **1 tool** | 0 tools | 0 tools |
+| Notebooks | **1 tool** | 0 tools | 0 tools |
+| Events & Incidents | **3 tools** | 2 tools | 0-1 tool |
+| Downtimes | **1 tool** | 1 tool | 0-1 tool |
+| **Total** | **48** | **20** | **3-13** |
+| Accidentally deletes your monitors | No | No | No |
+| Can mute your hosts at 3 AM | **No** | Yes | No |
+| Test coverage | 90%+ | Unknown | Hopeful |
+
+We're not saying the other MCP servers are bad. They're lovely. Some of them have features we don't, like the ability to *mute your production hosts* and *schedule downtimes* from an AI chat window. We chose not to include those. On purpose. You're welcome.
+
+### The Philosophy
+
+**Read everything. Write nothing.**
+
+Your AI assistant should be able to *see* all of Datadog. It should *not* be able to silence your pager at 3 AM because it decided your alerts were "probably fine." We have opinions about this.
 
 ---
 
@@ -28,7 +55,7 @@
 npx github:dreamiurg/datadog-mcp-server --help
 ```
 
-**That's it.** No installation required. Works with Node.js 20+.
+**That's it.** No installation required. Node.js 20+. Works in 8 seconds. We timed it.
 
 ---
 
@@ -38,12 +65,12 @@ npx github:dreamiurg/datadog-mcp-server --help
 
 You need two keys from your [Datadog Organization Settings](https://app.datadoghq.com/organization-settings/):
 
-| Credential | Where to Find |
-|------------|---------------|
-| **API Key** | Organization Settings → API Keys → New Key |
-| **Application Key** | Organization Settings → Application Keys → New Key |
+| Credential | Where to Find | Difficulty |
+|------------|---------------|-----------|
+| **API Key** | Organization Settings -> API Keys -> New Key | Easy |
+| **Application Key** | Organization Settings -> Application Keys -> New Key | Also easy |
 
-> **Tip:** For least-privilege access, [scope your Application Key](#application-key-scopes) to only the permissions you need.
+> **Tip:** For least-privilege access, [scope your Application Key](#application-key-scopes) to only the permissions you need. Or give it everything. We won't judge. (We will judge a little.)
 
 ### 2. Configure Your AI Tool
 
@@ -97,7 +124,7 @@ Add to your config file:
 |------|-------------|
 | Cursor | `~/.cursor/mcp.json` or `.cursor/mcp.json` (project) |
 | Windsurf | `~/.codeium/windsurf/mcp_config.json` |
-| VS Code | User Settings JSON (`Ctrl+Shift+P` → "Open User Settings (JSON)") |
+| VS Code | User Settings JSON (`Ctrl+Shift+P` -> "Open User Settings (JSON)") |
 
 ```json
 {
@@ -142,31 +169,157 @@ args = ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--ap
 
 ---
 
-## Available Tools
+## The Full Arsenal (48 Tools)
 
-| Tool | Description | Example Prompt |
-|------|-------------|----------------|
+### Logs & Log Management
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `search-logs` | Search logs with Datadog query syntax | *"Find errors in auth service last hour"* |
+| `aggregate-logs` | Compute counts, averages, group-bys on log data | *"Count errors by service in the last 24h"* |
+| `get-log-pipelines` | List log pipeline configurations | *"How are our logs being processed?"* |
+| `get-log-indexes` | List log indexes and retention settings | *"What retention is configured for our logs?"* |
+
+### APM & Traces
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `search-spans` | Search APM spans with query syntax | *"Find slow requests in payment service"* |
+| `aggregate-spans` | Compute APM statistics (p99, error rates) | *"Show p99 latency by service"* |
+| `get-services` | List APM-instrumented services | *"What services are being traced?"* |
+| `get-trace` | Get a full distributed trace by ID | *"Show all spans for trace abc123"* |
+| `search-apm-events` | Search raw APM events | *"Find APM events with errors in checkout"* |
+| `list-active-apm-events` | List currently active APM events | *"What APM events are happening right now?"* |
+
+### Metrics
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `query-metrics` | Query timeseries metric data | *"Show CPU usage for web hosts last 4 hours"* |
+| `get-metrics` | List available metrics | *"What metrics are available?"* |
+| `get-metric-metadata` | Get metric metadata and descriptions | *"Describe the system.cpu.user metric"* |
+| `search-metric-volumes` | Search metrics by name with volume data | *"Which metrics matching 'aws.*' have the highest volume?"* |
+
+### Monitors & Alerting
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
 | `get-monitors` | List monitors (filter by state, tags) | *"Show all alerting monitors"* |
 | `get-monitor` | Get monitor details by ID | *"Get details for monitor 12345"* |
+| `search-monitors` | Search monitors by query | *"Find monitors related to database"* |
+
+### Dashboards
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
 | `get-dashboards` | List all dashboards | *"What dashboards do we have?"* |
-| `get-dashboard` | Get dashboard by ID | *"Show the API metrics dashboard"* |
-| `get-metrics` | List available metrics | *"What metrics are available?"* |
-| `get-metric-metadata` | Get metric metadata | *"Describe the cpu.user metric"* |
-| `get-events` | Fetch events in time range | *"What events happened today?"* |
-| `get-incidents` | List incidents | *"Show active incidents"* |
-| `search-logs` | Search logs with queries | *"Find errors in prod last hour"* |
-| `aggregate-logs` | Analytics on log data | *"Count errors by service"* |
-| `get-hosts` | List infrastructure hosts | *"Show all production hosts"* |
-| `get-downtimes` | List scheduled maintenance windows | *"Are there any active downtimes?"* |
+| `get-dashboard` | Get dashboard details and widgets | *"Show the API metrics dashboard"* |
+| `list-dashboard-lists` | List dashboard collections | *"What dashboard lists are organized?"* |
+
+### SLOs
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
 | `get-slos` | List Service Level Objectives | *"Which SLOs are breaching?"* |
 | `get-slo` | Get SLO details by ID | *"Show error budget for SLO xyz"* |
-| `search-spans` | Search APM spans/traces | *"Find slow requests in payment service"* |
-| `aggregate-spans` | Compute APM statistics | *"Show p99 latency by service"* |
-| `get-services` | List APM-instrumented services | *"What services are being traced?"* |
-| `get-trace` | Get full trace by ID | *"Show all spans for trace abc123"* |
-| `search-security-findings` | List/search Cloud Security findings | *"Find high-severity cloud security findings"* |
-| `get-security-finding` | Get legacy CSPM/CIEM finding by ID | *"Get finding abc123"* |
-| `list-posture-findings` | List legacy CSPM/CIEM posture findings | *"List compliance findings that failed"* |
+| `get-slo-history` | Get historical SLO performance | *"How has our API SLO trended this month?"* |
+
+### Synthetics
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `get-synthetic-tests` | List synthetic tests | *"What synthetic checks do we have?"* |
+| `get-synthetic-results` | Get results for a specific test | *"Show recent results for the checkout test"* |
+
+### Real User Monitoring (RUM)
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `search-rum-events` | Search RUM events with filters | *"Find RUM errors on the checkout page"* |
+| `list-rum-applications` | List registered RUM applications | *"What apps have RUM enabled?"* |
+| `aggregate-rum-events` | Analytics on RUM data (counts, averages, group-by) | *"Average page load time by country"* |
+
+### Infrastructure
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `get-hosts` | List infrastructure hosts | *"Show all production hosts"* |
+| `get-host-tags` | Get tags for all hosts | *"What tags are on our hosts?"* |
+| `get-active-hosts-count` | Get total active/up host count | *"How many hosts are running?"* |
+| `get-containers` | List running containers | *"Show containers filtered by image"* |
+| `list-processes` | List running processes | *"Find java processes across hosts"* |
+
+### Service Catalog
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `list-service-definitions` | List all service definitions | *"What services are in the catalog?"* |
+| `get-service-definition` | Get a single service definition | *"Who owns the auth service?"* |
+| `get-service-dependencies` | Get service dependency map | *"What does the payment service depend on?"* |
+
+### CI Visibility
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `list-ci-pipelines` | List CI pipeline events | *"Show recent CI pipeline runs"* |
+| `get-ci-pipeline-events` | Aggregate CI pipeline analytics | *"Average pipeline duration by repo"* |
+
+### Security
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `search-security-findings` | Search Cloud Security findings | *"Find high-severity security findings"* |
+| `get-security-finding` | Get a specific security finding | *"Get finding abc123"* |
+| `list-posture-findings` | List compliance/posture findings | *"Show failed compliance checks"* |
+| `search-security-signals` | Search security monitoring signals | *"Recent threat detections"* |
+
+### Organization
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `list-teams` | List Datadog teams | *"What teams exist in our org?"* |
+| `list-users` | List Datadog users | *"Who has access to Datadog?"* |
+
+### Everything Else
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `get-events` | Fetch events in a time range | *"What events happened today?"* |
+| `get-incidents` | List incidents | *"Show active incidents"* |
+| `get-downtimes` | List scheduled maintenance | *"Any active downtimes?"* |
+| `get-notebooks` | List Datadog notebooks | *"What notebooks do we have?"* |
+| `search-error-tracking-events` | Search error tracking issues | *"Recent error tracking events in prod"* |
+| `get-audit-events` | Search audit trail | *"Who changed monitor configs this week?"* |
+| `get-dbm-samples` | Get Database Monitoring query samples | *"Show slow postgres queries"* |
+| `get-usage` | Get usage and billing data | *"What's our log ingestion volume?"* |
+
+---
+
+## The Competitive Landscape (We Did the Research So You Don't Have To)
+
+There are approximately seven thousand Datadog MCP servers on GitHub. Here's how they stack up:
+
+| Capability | **Us** | winor30 | GeLi2001 | shelfio | ppandrangi |
+|-----------|:------:|:-------:|:--------:|:-------:|:---------:|
+| Total tools | **48** | 20 | 10 | 13 | 29 |
+| Read-only by design | Yes | No | Yes | Yes | No |
+| Can mute your hosts | No | **Yes** | No | No | No |
+| Can delete your dashboards | No | No | No | No | **Yes** |
+| Can schedule downtimes | No | **Yes** | No | No | **Yes** |
+| Test suite | 219 tests | - | - | - | - |
+| Last meaningful update | Today | Recent | Dec 2025 | Jan 2026 | Dec 2025 |
+
+> **A note on write operations:** Some competitors let your AI create monitors, delete dashboards, and schedule downtimes. That's a feature. It's also the plot of every "AI gone wrong" movie. We chose the boring path: read everything, touch nothing.
+
+### What They Have That We Don't
+
+In the interest of full transparency:
+
+- **winor30** can mute/unmute hosts and schedule downtimes (write operations we intentionally excluded)
+- **ppandrangi** can CRUD monitors and dashboards (see above re: AI movies)
+- **shelfio** has some unique metric field exploration tools
+
+We sleep well at night.
 
 ---
 
@@ -216,21 +369,31 @@ For least-privilege security, create an Application Key with only required scope
 
 | Tools | Required Scope |
 |-------|----------------|
-| `get-monitors`, `get-monitor` | `monitors_read` |
-| `get-dashboards`, `get-dashboard` | `dashboards_read` |
-| `get-metrics`, `get-metric-metadata` | `metrics_read` |
-| `get-events` | `events_read` |
-| `search-logs`, `aggregate-logs` | `logs_read_data` |
-| `get-incidents` | `incident_read` |
-| `get-hosts` | `hosts_read` |
-| `get-downtimes` | `monitors_downtime` |
-| `get-slos`, `get-slo` | `slos_read` |
-| `search-spans`, `aggregate-spans`, `get-trace` | `apm_read` |
-| `get-services` | `apm_service_catalog_read` |
-| `search-security-findings` | `security_monitoring_findings_read` (or `appsec_vm_read`; OAuth apps still require `security_monitoring_findings_read`) |
-| `get-security-finding`, `list-posture-findings` | `security_monitoring_findings_read` |
+| Monitors (`get-monitors`, `get-monitor`, `search-monitors`) | `monitors_read` |
+| Dashboards (`get-dashboards`, `get-dashboard`, `list-dashboard-lists`) | `dashboards_read` |
+| Metrics (`get-metrics`, `get-metric-metadata`, `query-metrics`, `search-metric-volumes`) | `metrics_read` |
+| Events (`get-events`) | `events_read` |
+| Logs (`search-logs`, `aggregate-logs`, `get-log-pipelines`, `get-log-indexes`) | `logs_read_data` |
+| Incidents (`get-incidents`) | `incident_read` |
+| Hosts (`get-hosts`, `get-host-tags`, `get-active-hosts-count`, `get-containers`, `list-processes`) | `hosts_read` |
+| Downtimes (`get-downtimes`) | `monitors_downtime` |
+| SLOs (`get-slos`, `get-slo`, `get-slo-history`) | `slos_read` |
+| APM (`search-spans`, `aggregate-spans`, `get-trace`, `search-apm-events`, `list-active-apm-events`) | `apm_read` |
+| Services (`get-services`, `get-service-dependencies`) | `apm_service_catalog_read` |
+| Service Catalog (`list-service-definitions`, `get-service-definition`) | `apm_service_catalog_read` |
+| RUM (`search-rum-events`, `list-rum-applications`, `aggregate-rum-events`) | `rum_read` |
+| Synthetics (`get-synthetic-tests`, `get-synthetic-results`) | `synthetics_read` |
+| Security (`search-security-findings`, `get-security-finding`, `list-posture-findings`, `search-security-signals`) | `security_monitoring_findings_read` |
+| Teams (`list-teams`) | `teams_read` |
+| Users (`list-users`) | `user_access_read` |
+| Notebooks (`get-notebooks`) | `notebooks_read` |
+| CI Visibility (`list-ci-pipelines`, `get-ci-pipeline-events`) | `ci_visibility_pipelines_read` |
+| Error Tracking (`search-error-tracking-events`) | `error_tracking_read` |
+| Audit (`get-audit-events`) | `audit_trail_read` |
+| DBM (`get-dbm-samples`) | `dbm_read` |
+| Usage (`get-usage`) | `usage_read` |
 
-**Create a scoped key:** Organization Settings → Application Keys → New Key → Select scopes
+**Create a scoped key:** Organization Settings -> Application Keys -> New Key -> Select scopes
 
 ---
 
@@ -282,10 +445,12 @@ npm test
 | Script | Description |
 |--------|-------------|
 | `npm run build` | Compile TypeScript |
-| `npm test` | Run tests |
-| `npm run test:coverage` | Run tests with coverage |
-| `npm run lint` | Run linter |
+| `npm test` | Run tests (219 of them) |
+| `npm run test:coverage` | Run tests with coverage (90%+ enforced) |
+| `npm run lint` | Run Biome linter |
 | `npm run typecheck` | Type check |
+| `npm run complexity` | Check cyclomatic complexity |
+| `npm run ci` | Run everything (the full gauntlet) |
 
 ### Test with MCP Inspector
 
@@ -294,6 +459,12 @@ npx @modelcontextprotocol/inspector node dist/index.js \
   --apiKey=YOUR_API_KEY \
   --appKey=YOUR_APP_KEY
 ```
+
+---
+
+## Contributing
+
+PRs welcome. We have strong opinions about read-only access, 90% test coverage, and cognitive complexity under 15. If that sounds like fun, you'll fit right in.
 
 ---
 
