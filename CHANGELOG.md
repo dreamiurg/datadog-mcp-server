@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/dreamiurg/datadog-mcp-server/compare/v1.3.0...v1.4.0) (2026-02-06)
+
+
+### Features
+
+* add 12 more observability tools (48 total) ([#12](https://github.com/dreamiurg/datadog-mcp-server/issues/12)) ([89b682f](https://github.com/dreamiurg/datadog-mcp-server/commit/89b682f6c03df29d74c87722200e322cf6a907d1))
+
 ## [1.3.0](https://github.com/dreamiurg/datadog-mcp-server/compare/v1.2.1...v1.3.0) (2026-02-06)
 
 
