@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.10.0](https://github.com/dreamiurg/datadog-mcp-server/compare/v1.9.2...v1.10.0) (2026-02-07)
+
+
+### Features
+
+* add 10 new observability tools (Wave 8) ([#36](https://github.com/dreamiurg/datadog-mcp-server/issues/36)) ([37a0f20](https://github.com/dreamiurg/datadog-mcp-server/commit/37a0f2060653aaa5c736fa4856b6f8cccff4037e))
+
+
+### Documentation
+
+* update README for 116 tools, anonymize competitors, add disclaimer ([#37](https://github.com/dreamiurg/datadog-mcp-server/issues/37)) ([183de51](https://github.com/dreamiurg/datadog-mcp-server/commit/183de51a814915ccf820d8fe94de94c6ea09afce))
+
+
+### Tests
+
+* add missing tests for 14 legacy tools ([#34](https://github.com/dreamiurg/datadog-mcp-server/issues/34)) ([ad6d3fa](https://github.com/dreamiurg/datadog-mcp-server/commit/ad6d3fad19a88b1a25c6954a4ae9d016f7cb0dcc))
+
 ## [1.9.2](https://github.com/dreamiurg/datadog-mcp-server/compare/v1.9.1...v1.9.2) (2026-02-07)
 
 
