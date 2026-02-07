@@ -489,8 +489,7 @@ args = ["github:dreamiurg/datadog-mcp", "--apiKey", "YOUR_API_KEY", "--appKey", 
 
 ---
 
-<details>
-<summary><strong>The Competitive Landscape</strong> (We did the research so you don't have to)</summary>
+## The Competitive Landscape (We Did the Research So You Don't Have To)
 
 There are approximately seven thousand Datadog MCP servers on GitHub. We counted. Then we lost count. Then we counted again. Here's how they stack up:
 
@@ -515,8 +514,6 @@ In the interest of full transparency (and because our lawyers said we had to):
 - Some servers have unique metric field exploration tools
 
 We sleep *extremely* well at night.
-
-</details>
 
 ---
 
