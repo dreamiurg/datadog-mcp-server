@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/dreamiurg/datadog-mcp-server/compare/v1.5.0...v1.6.0) (2026-02-07)
+
+
+### Features
+
+* add 12 audit, usage, container, and security tools (72 total) ([#19](https://github.com/dreamiurg/datadog-mcp-server/issues/19)) ([d66034b](https://github.com/dreamiurg/datadog-mcp-server/commit/d66034b54c6793c8ab513348798c3187854252e3))
+
 ## [1.5.0](https://github.com/dreamiurg/datadog-mcp-server/compare/v1.4.1...v1.5.0) (2026-02-06)
 
 
