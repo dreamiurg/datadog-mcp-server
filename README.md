@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/dreamiurg/datadog-mcp-server/graph/badge.svg)](https://codecov.io/gh/dreamiurg/datadog-mcp-server)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/dreamiurg/datadog-mcp-server/badge)](https://scorecard.dev/viewer/?uri=github.com/dreamiurg/datadog-mcp-server)
 
-> **The Datadog MCP server your AI deserves.** 96 read-only tools. Every observability pillar. Zero writes. Zero regrets.
+> **The Datadog MCP server your AI deserves.** 108 read-only tools. Every observability pillar. Zero writes. Zero regrets.
 
 ---
 
@@ -12,7 +12,7 @@
 
 Look, we get it. You searched "datadog mcp server" and got seven results. You're wondering which one to pick. Let us save you some time.
 
-| Feature | **Us (96 tools)** | Next Best (29 tools) | The Others (3-13 tools) |
+| Feature | **Us (108 tools)** | Next Best (29 tools) | The Others (3-13 tools) |
 |---------|:-----------------:|:-------------------:|:----------------------:|
 | Logs (search + aggregate + pipelines + indexes) | **7 tools** | 1 tool | 0-1 tool |
 | APM (traces, spans, services, dependencies) | **7 tools** | 1 tool | 0 tools |
@@ -20,30 +20,32 @@ Look, we get it. You searched "datadog mcp server" and got seven results. You're
 | Monitors (list, get, search) | **4 tools** | 1 tool | 0-1 tool |
 | Dashboards (get, list, collections) | **3 tools** | 1 tool | 0-1 tool |
 | SLOs (list, get, history) | **5 tools** | 0 tools | 0-1 tool |
-| Synthetics (tests + results) | **4 tools** | 0 tools | 0-1 tool |
-| Security (findings, posture, signals) | **8 tools** | 0 tools | 0-1 tool |
-| Infrastructure (hosts, tags, containers, processes) | **7 tools** | 2 tools | 0-1 tool |
+| Synthetics (tests, results, locations) | **5 tools** | 0 tools | 0-1 tool |
+| Security (findings, posture, signals, rules, scanning) | **10 tools** | 0 tools | 0-1 tool |
+| Infrastructure (hosts, tags, containers, processes) | **8 tools** | 2 tools | 0-1 tool |
 | Service Catalog | **2 tools** | 0 tools | 0-1 tool |
 | CI Visibility | **2 tools** | 0 tools | 0-1 tool |
-| Organization (teams, users) | **2 tools** | 0 tools | 0-1 tool |
+| Organization | **3 tools** | 0 tools | 0-1 tool |
 | Metrics (query, metadata, volumes, list) | **4 tools** | 1 tool | 0-1 tool |
 | Error Tracking | **2 tools** | 0 tools | 0 tools |
 | Database Monitoring | **1 tool** | 0 tools | 0 tools |
 | Audit Trail | **2 tools** | 0 tools | 0 tools |
 | Usage & Billing | **4 tools** | 0 tools | 0 tools |
 | Notebooks | **3 tools** | 0 tools | 0 tools |
-| Events & Incidents | **5 tools** | 2 tools | 0-1 tool |
+| Events & Incidents | **6 tools** | 2 tools | 0-1 tool |
 | Downtimes | **2 tools** | 1 tool | 0-1 tool |
 | Network Monitoring | **2 tools** | 0 tools | 0 tools |
 | Cloud Cost Management | **1 tool** | 0 tools | 0 tools |
 | DORA Metrics | **1 tool** | 0 tools | 0 tools |
 | Workflows & Automation | **1 tool** | 0 tools | 0 tools |
 | Fleet Management | **1 tool** | 0 tools | 0 tools |
-| AWS Integration | **1 tool** | 0 tools | 0 tools |
+| Cloud Integrations (AWS/GCP/Azure/Cloudflare/Confluent) | **5 tools** | 0 tools | 0 tools |
+| Webhooks | **1 tool** | 0 tools | 0 tools |
+| Access Control | **1 tool** | 0 tools | 0 tools |
 | API Key Management | **1 tool** | 0 tools | 0 tools |
 | Monitor Notifications | **1 tool** | 0 tools | 0 tools |
 | IP Ranges & Config | **1 tool** | 0 tools | 0 tools |
-| **Total** | **96** | **20** | **3-13** |
+| **Total** | **108** | **20** | **3-13** |
 | Accidentally deletes your monitors | No | No | No |
 | Can mute your hosts at 3 AM | **No** | Yes | No |
 | Test coverage | 90%+ | Unknown | Hopeful |
@@ -178,7 +180,7 @@ args = ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--ap
 
 ---
 
-## The Full Arsenal (96 Tools)
+## The Full Arsenal (108 Tools)
 
 ### Logs & Log Management
 
@@ -248,6 +250,7 @@ args = ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--ap
 | `get-synthetic-results` | Get results for a specific test | *"Show recent results for the checkout test"* |
 | `list-synthetics-global-variables` | List Synthetics global variables | *"What global variables are available for tests?"* |
 | `list-synthetics-locations` | List available Synthetics testing locations | *"Where can I run Synthetics tests from?"* |
+| `list-synthetics-private-locations` | List Synthetics private locations | *"What private locations are configured for testing?"* |
 
 ### Real User Monitoring (RUM)
 
@@ -264,6 +267,7 @@ args = ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--ap
 | `get-hosts` | List infrastructure hosts | *"Show all production hosts"* |
 | `get-host-tags` | Get tags for all hosts | *"What tags are on our hosts?"* |
 | `get-active-hosts-count` | Get total active/up host count | *"How many hosts are running?"* |
+| `list-host-totals` | Get total active and up host counts | *"Show me the total host count breakdown"* |
 | `list-network-devices` | List NDM network devices | *"Show network device status"* |
 | `list-fleet-agents` | List Datadog agents across fleet | *"Which agents are outdated?"* |
 | `get-containers` | List running containers | *"Show containers filtered by image"* |
@@ -296,11 +300,14 @@ args = ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--ap
 | `list-vulnerabilities` | List vulnerability findings | *"Show critical CVEs in production"* |
 | `list-csm-threats-agent-rules` | List CSM Threats agent rules | *"What workload security rules are enabled?"* |
 | `list-security-rules` | List security monitoring rules | *"What detection rules are active?"* |
+| `list-security-monitoring-rules` | List security monitoring detection rules | *"What security detection rules are configured?"* |
+| `get-sensitive-data-scanner-config` | Get Sensitive Data Scanner configuration | *"What sensitive data scanning rules are active?"* |
 
 ### Organization
 
 | Tool | What It Does | Try Asking |
 |------|-------------|------------|
+| `get-organization` | Get Datadog organization info | *"Show organization details and settings"* |
 | `list-teams` | List Datadog teams | *"What teams exist in our org?"* |
 | `list-users` | List Datadog users | *"Who has access to Datadog?"* |
 
@@ -360,12 +367,18 @@ args = ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--ap
 |------|-------------|------------|
 | `search-incidents` | Search incidents with advanced filters | *"Find P1 incidents related to database"* |
 | `get-incident-todos` | Get action items for an incident | *"What's pending for this P0?"* |
+| `get-incident-services` | List incident services | *"What services are configured for incident management?"* |
 
 ### Cloud & Integrations
 
 | Tool | What It Does | Try Asking |
 |------|-------------|------------|
 | `list-aws-accounts` | List integrated AWS accounts | *"Which AWS accounts are connected?"* |
+| `list-gcp-integration` | List GCP integration accounts | *"Which GCP projects are integrated?"* |
+| `list-azure-integration` | List Azure integration accounts | *"Which Azure subscriptions are connected?"* |
+| `list-cloudflare-accounts` | List Cloudflare accounts | *"What Cloudflare accounts are integrated?"* |
+| `list-confluent-accounts` | List Confluent Cloud accounts | *"Which Confluent Cloud accounts are connected?"* |
+| `list-webhooks` | List webhook integrations | *"What webhooks are configured?"* |
 | `list-api-keys` | List Datadog API keys | *"What API keys are active?"* |
 
 ### DevOps & Automation
@@ -378,6 +391,12 @@ args = ["github:dreamiurg/datadog-mcp-server", "--apiKey", "YOUR_API_KEY", "--ap
 | `list-monitor-notification-rules` | List monitor notification routing | *"Who gets alerted for this monitor?"* |
 | `list-cost-budgets` | List cloud cost budgets | *"Are any teams over budget?"* |
 
+### Access Control
+
+| Tool | What It Does | Try Asking |
+|------|-------------|------------|
+| `list-restriction-policies` | Get restriction policy for a resource | *"What access restrictions are configured?"* |
+
 ---
 
 ## The Competitive Landscape (We Did the Research So You Don't Have To)
@@ -386,12 +405,12 @@ There are approximately seven thousand Datadog MCP servers on GitHub. Here's how
 
 | Capability | **Us** | winor30 | GeLi2001 | shelfio | ppandrangi |
 |-----------|:------:|:-------:|:--------:|:-------:|:---------:|
-| Total tools | **96** | 20 | 10 | 13 | 29 |
+| Total tools | **108** | 20 | 10 | 13 | 29 |
 | Read-only by design | Yes | No | Yes | Yes | No |
 | Can mute your hosts | No | **Yes** | No | No | No |
 | Can delete your dashboards | No | No | No | No | **Yes** |
 | Can schedule downtimes | No | **Yes** | No | No | **Yes** |
-| Test suite | 428 tests | - | - | - | - |
+| Test suite | 480 tests | - | - | - | - |
 | Last meaningful update | Today | Recent | Dec 2025 | Jan 2026 | Dec 2025 |
 
 > **A note on write operations:** Some competitors let your AI create monitors, delete dashboards, and schedule downtimes. That's a feature. It's also the plot of every "AI gone wrong" movie. We chose the boring path: read everything, touch nothing.
@@ -542,7 +561,7 @@ npm test
 | Script | Description |
 |--------|-------------|
 | `npm run build` | Compile TypeScript |
-| `npm test` | Run tests (428 of them) |
+| `npm test` | Run tests (480 tests in 96 files) |
 | `npm run test:coverage` | Run tests with coverage (90%+ enforced) |
 | `npm run lint` | Run Biome linter |
 | `npm run typecheck` | Type check |
